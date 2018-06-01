@@ -1,120 +1,156 @@
 <?php
-	
-	function isNull($nombre, $user, $pass, $pass_con, $email){
-		if(strlen(trim($nombre)) < 1 || strlen(trim($user)) < 1 || strlen(trim($pass)) < 1 || strlen(trim($pass_con)) < 1 || strlen(trim($email)) < 1)
-		{
-			return true;
-			} else {
-			return false;
-		}
+
+function isNull($nombre,$paterno,$materno/*, $user, $pass, $pass_con, $email*/){
+if(strlen(trim($nombre)) < 1 || strlen(trim($paterno)) < 1 || strlen(trim($materno)) < 1 /*|| strlen(trim($user)) < 1 || strlen(trim($pass)) < 1 || strlen(trim($pass_con)) < 1 || strlen(trim($email)) < 1*/)
+{
+	return true;
+} else {
+	return false;
+}
+}
+
+function isEmail($email)
+{
+	if (filter_var($email, FILTER_VALIDATE_EMAIL)){
+		return true;
+	} else {
+		return false;
 	}
-	
-	function isEmail($email)
+}
+
+function validaPassword($var1, $var2)
+{
+	if (strcmp($var1, $var2) !== 0){
+		return false;
+	} else {
+		return true;
+	}
+}
+
+function minMax($min, $max, $valor){
+	if(strlen(trim($valor)) < $min)
 	{
-		if (filter_var($email, FILTER_VALIDATE_EMAIL)){
-			return true;
-			} else {
-			return false;
-		}
+		return true;
 	}
-	
-	function validaPassword($var1, $var2)
+	else if(strlen(trim($valor)) > $max)
 	{
-		if (strcmp($var1, $var2) !== 0){
-			return false;
-			} else {
-			return true;
-		}
+		return true;
 	}
-	
-	function minMax($min, $max, $valor){
-		if(strlen(trim($valor)) < $min)
-		{
-			return true;
-		}
-		else if(strlen(trim($valor)) > $max)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-	
-	function usuarioExiste($usuario)
+	else
 	{
+		return false;
+	}
+}
+
+function usuarioExiste($usuario)
+{
+	global $mysqli;
+
+	$stmt = $mysqli->prepare("SELECT id FROM usuarios WHERE usuario = ? LIMIT 1");
+	$stmt->bind_param("s", $usuario);
+	$stmt->execute();
+	$stmt->store_result();
+	$num = $stmt->num_rows;
+	$stmt->close();
+
+	if ($num > 0){
+		return true;
+	} else {
+		return false;
+	}
+}
+
+function emailExiste($email)
+{
+	global $mysqli;
+
+	$stmt = $mysqli->prepare("SELECT id FROM usuarios WHERE correo = ? LIMIT 1");
+	$stmt->bind_param("s", $email);
+	$stmt->execute();
+	$stmt->store_result();
+	$num = $stmt->num_rows;
+	$stmt->close();
+
+	if ($num > 0){
+		return true;
+	} else {
+		return false;
+	}
+}
+
+function dniExiste($dni)
+{
+	global $mysqli;
+
+	$stmt = $mysqli->prepare("select dni from TB_PERSONA where dni = ? LIMIT 1");
+	$stmt->bind_param("s", $dni);
+	$stmt->execute();
+	$stmt->store_result();
+	$num = $stmt->num_rows;
+	$stmt->close();
+
+	if ($num > 0){
+		return true;
+	} else {
+		return false;
+	}
+}	
+
+function generateToken()
+{
+	$gen = md5(uniqid(mt_rand(), false));
+	return $gen;
+}
+
+function hashPassword($password)
+{
+	$hash = password_hash($password, PASSWORD_DEFAULT);
+	return $hash;
+}
+
+function resultBlock($errors){
+	if(count($errors) > 0)
+	{
+		echo "<div id='error' class='alert alert-danger' role='alert'>
+		<a href='#' onclick=\"showHide('error');\">Revisar los siguientes campos:</a>
+		<ul>";
+		foreach($errors as $error)
+		{
+			echo "<li>".$error."</li>";
+		}
+		echo "</ul>";
+		echo "</div>";
+	}
+}
+
+function registraPersona($dni,$cod_tipo_persona,$nombre,$paterno,$materno){
+	global $mysqli;
+
+	$nom = strtoupper($nombre);
+	$pat = strtoupper($paterno);
+	$mat = strtoupper($materno);
+
+		//$stmt = $mysqli->prepare("INSERT INTO usuarios (usuario, password, nombre, correo, activacion, token, id_tipo) VALUES(?,?,?,?,?,?,?)");
+	$stmt = $mysqli->prepare("INSERT INTO TB_PERSONA (dni,cod_tipo_persona,nombre,paterno,materno,cod_estado,fecha_reg) VALUES(?,?,?,?,?,1,SYSDATE())");
+	$stmt->bind_param('sisss', $dni,$cod_tipo_persona,$nom,$pat,$mat);
+
+	if ($stmt->execute()){
+			return $dni;//$mysqli->insert_id;
+		} else {
+			return 0;
+		}
+	}
+	
+	function registraUsuario($usuario, $pass_hash, $email, $activo, $token, $dni){
+		
 		global $mysqli;
 		
-		$stmt = $mysqli->prepare("SELECT id FROM usuarios WHERE usuario = ? LIMIT 1");
-		$stmt->bind_param("s", $usuario);
-		$stmt->execute();
-		$stmt->store_result();
-		$num = $stmt->num_rows;
-		$stmt->close();
-		
-		if ($num > 0){
-			return true;
-			} else {
-			return false;
-		}
-	}
-	
-	function emailExiste($email)
-	{
-		global $mysqli;
-		
-		$stmt = $mysqli->prepare("SELECT id FROM usuarios WHERE correo = ? LIMIT 1");
-		$stmt->bind_param("s", $email);
-		$stmt->execute();
-		$stmt->store_result();
-		$num = $stmt->num_rows;
-		$stmt->close();
-		
-		if ($num > 0){
-			return true;
-			} else {
-			return false;
-		}
-	}
-	
-	function generateToken()
-	{
-		$gen = md5(uniqid(mt_rand(), false));
-		return $gen;
-	}
-	
-	function hashPassword($password)
-	{
-		$hash = password_hash($password, PASSWORD_DEFAULT);
-		return $hash;
-	}
-	
-	function resultBlock($errors){
-		if(count($errors) > 0)
-		{
-			echo "<div id='error' class='alert alert-danger' role='alert'>
-			<a href='#' onclick=\"showHide('error');\">Revisar los siguientes campos:</a>
-			<ul>";
-			foreach($errors as $error)
-			{
-				echo "<li>".$error."</li>";
-			}
-			echo "</ul>";
-			echo "</div>";
-		}
-	}
-	
-	function registraUsuario($usuario, $pass_hash, $nombre, $email, $activo, $token, $tipo_usuario){
-		
-		global $mysqli;
-		
-		$stmt = $mysqli->prepare("INSERT INTO usuarios (usuario, password, nombre, correo, activacion, token, id_tipo) VALUES(?,?,?,?,?,?,?)");
-		$stmt->bind_param('ssssisi', $usuario, $pass_hash, $nombre, $email, $activo, $token, $tipo_usuario);
+		$stmt = $mysqli->prepare("INSERT INTO usuarios (usuario, password, correo, activacion, token, dni) VALUES(?,?,?,?,?,?)");
+		$stmt->bind_param('sssiss', $usuario, $pass_hash, $email, $activo, $token, $dni);
 		
 		if ($stmt->execute()){
 			return $mysqli->insert_id;
-			} else {
+		} else {
 			return 0;
 		}
 	}
@@ -131,11 +167,11 @@
 		$mail->Port = 587; //Modificar
 		
 		$mail->SMTPOptions = array(
-		'ssl' => array(
-		'verify_peer' => false,
-		'verify_peer_name' => false,
-		'allow_self_signed' => true
-		)
+			'ssl' => array(
+				'verify_peer' => false,
+				'verify_peer_name' => false,
+				'allow_self_signed' => true
+			)
 		);
 		
 		$mail->Username = 'slither366@gmail.com';//Modificar
@@ -149,9 +185,9 @@
 		$mail->IsHTML(true);
 		
 		if($mail->send())
-		return true;
+			return true;
 		else
-		return false;
+			return false;
 	}
 	
 	function validaIdToken($id, $token){
@@ -169,14 +205,14 @@
 			
 			if($activacion == 1){
 				$msg = "La cuenta ya se activo anteriormente.";
-				} else {
+			} else {
 				if(activarUsuario($id)){
 					$msg = 'Cuenta activada.';
-					} else {
+				} else {
 					$msg = 'Error al Activar Cuenta';
 				}
 			}
-			} else {
+		} else {
 			$msg = 'No existe el registro para activar.';
 		}
 		return $msg;
@@ -207,8 +243,8 @@
 	function login($usuario, $password)
 	{
 		global $mysqli;
-		
-		$stmt = $mysqli->prepare("SELECT id, id_tipo, password FROM usuarios WHERE usuario = ? || correo = ? LIMIT 1");
+
+		$stmt = $mysqli->prepare("SELECT u.id, t.cod_tipo_persona, u.password FROM usuarios u,tb_persona t WHERE u.dni = t.dni AND usuario = ? || correo = ? LIMIT 1");
 		$stmt->bind_param("ss", $usuario, $usuario);
 		$stmt->execute();
 		$stmt->store_result();
@@ -230,14 +266,14 @@
 					$_SESSION['tipo_usuario'] = $id_tipo;
 					
 					header("location: welcome.php");
-					} else {
+				} else {
 					
 					$errors = "La contrase&ntilde;a es incorrecta";
 				}
-				} else {
+			} else {
 				$errors = 'El usuario no esta activo';
 			}
-			} else {
+		} else {
 			$errors = "El nombre de usuario o correo electr&oacute;nico no existe";
 		}
 		return $errors;
@@ -291,7 +327,8 @@
 	{
 		global $mysqli;
 		
-		$stmt = $mysqli->prepare("SELECT $campo FROM usuarios WHERE $campoWhere = ? LIMIT 1");
+		//$stmt = $mysqli->prepare("SELECT $campo FROM usuarios WHERE $campoWhere = ? LIMIT 1");
+		$stmt = $mysqli->prepare("SELECT $campo FROM usuarios u,tb_persona t WHERE u.dni = t.dni AND $campoWhere = ? LIMIT 1");
 		$stmt->bind_param('s', $valor);
 		$stmt->execute();
 		$stmt->store_result();
@@ -365,7 +402,7 @@
 		
 		if($stmt->execute()){
 			return true;
-			} else {
+		} else {
 			return false;		
 		}
 	}
@@ -390,6 +427,6 @@
 		else
 		{
 			return null;	
-		}
+		}		
 	}
 	

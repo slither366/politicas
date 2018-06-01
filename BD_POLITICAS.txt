@@ -10,12 +10,13 @@ USE LOGIN;
 -- --------------------------------------------------------
 --
 -- Estructura de tabla para la tabla TB_TIPO_USUARIO
---/*
-drop table USUARIOS;
+--
+/*drop table USUARIOS;
 drop table TB_ESTADO_DOCUMENTOS;
 drop table TB_SEMAFORO;
 drop table TB_POLITICAS;
 drop table TB_ESTADO;
+drop table TB_ESTADO_PERSONA;
 drop table TB_DET_DOCUMENTOS;
 drop table TB_CAB_DOCUMENTOS;
 drop table TB_LOCALES;
@@ -58,6 +59,7 @@ select * from usuarios;
 --
 -- Estructura de tabla para la tabla TB_LOCALES
 --
+
 CREATE TABLE IF NOT EXISTS TB_LOCALES(
 cod_local varchar(5) NOT NULL,
 cod_cia	varchar(3) NOT NULL,
@@ -76,18 +78,18 @@ SELECT * FROM TB_LOCALES
 --
 -- Estructura de tabla para la tabla TB_ESTADO
 --
-CREATE TABLE IF NOT EXISTS TB_ESTADO (
-cod_estado int(1) NOT NULL,
+CREATE TABLE IF NOT EXISTS TB_ESTADO_SEMAFORO (
+cod_est_semaforo int(1) NOT NULL,
 descripcion varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 --
 -- Indices de la tabla TB_ESTADO
 --
-ALTER TABLE TB_ESTADO
-  ADD PRIMARY KEY (cod_estado);
+ALTER TABLE TB_ESTADO_SEMAFORO
+  ADD PRIMARY KEY (cod_est_semaforo);
 
-INSERT INTO TB_ESTADO VALUES(0,'PENDIENTE');
-INSERT INTO TB_ESTADO VALUES(1,'TERMINADO');
+INSERT INTO TB_ESTADO_SEMAFORO VALUES(0,'PENDIENTE');
+INSERT INTO TB_ESTADO_SEMAFORO VALUES(1,'TERMINADO');
 -- --------------------------------------------------------
 --
 -- Estructura de tabla para la tabla TB_SEMAFORO
@@ -95,7 +97,7 @@ INSERT INTO TB_ESTADO VALUES(1,'TERMINADO');
 CREATE TABLE IF NOT EXISTS TB_SEMAFORO (
 cod_semaforo int(2) NOT NULL,
 semaforo			varchar(30) NOT NULL,
-cod_estado 		int(1) NOT NULL,
+cod_est_semaforo 		int(1) NOT NULL,
 rango_dias varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 --
@@ -110,7 +112,7 @@ ALTER TABLE TB_SEMAFORO
   MODIFY cod_semaforo int(2) NOT NULL AUTOINCREMENT;
 */
 ALTER TABLE TB_SEMAFORO
-	ADD FOREIGN KEY(cod_estado) REFERENCES TB_ESTADO(cod_estado);
+	ADD FOREIGN KEY(cod_est_semaforo) REFERENCES TB_ESTADO_SEMAFORO(cod_est_semaforo);
 
 INSERT INTO TB_SEMAFORO VALUES(1,'VERDE',1,'0 DIAS');
 INSERT INTO TB_SEMAFORO VALUES(2,'AMARILLO',0,'ENTRE 5 Y 10 DIAS');
@@ -163,6 +165,21 @@ INSERT INTO TB_TIPO_PERSONA VALUES(3,'JEFE ZONAL');
 select * from TB_TIPO_PERSONA
 -- --------------------------------------------------------
 --
+-- Estructura de tabla para la tabla TB_ESTADO
+--
+CREATE TABLE IF NOT EXISTS TB_ESTADO(
+cod_estado	int(1) NOT NULL,
+descripcion	varchar(50)	NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ALTER TABLE TB_ESTADO
+	ADD PRIMARY KEY(cod_estado);
+
+INSERT INTO TB_ESTADO VALUES(0,'INACTIVO');
+INSERT INTO TB_ESTADO VALUES(1,'ACTIVO');
+select * from TB_ESTADO
+-- --------------------------------------------------------
+--
 -- Estructura de tabla para la tabla TB_PERSONA
 --
 CREATE TABLE IF NOT EXISTS TB_PERSONA(
@@ -170,7 +187,9 @@ dni					varchar(8) NOT NULL,
 cod_tipo_persona int(2) NOT NULL,
 nombre			varchar(50) NOT NULL,
 paterno			varchar(50) NOT NULL,
-materno		  varchar(50) NOT NULL
+materno		  varchar(50) NOT NULL,
+cod_estado			int(1) NOT NULL,
+fecha_reg		datetime
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -182,13 +201,20 @@ ALTER TABLE TB_PERSONA
 ALTER TABLE TB_PERSONA
   ADD FOREIGN KEY(cod_tipo_persona) REFERENCES TB_TIPO_PERSONA(cod_tipo_persona);
 
-INSERT INTO TB_PERSONA VALUES('40601632',3,'IVOONE MILAGROS','RINCON','SANTOS');
+ALTER TABLE TB_PERSONA
+  ADD FOREIGN KEY(cod_estado) REFERENCES TB_ESTADO(cod_estado);
+
+INSERT INTO TB_PERSONA VALUES('40601632',3,'IVOONE MILAGROS','RINCON','SANTOS',1,SYSDATE());
+
+select dni,cod_tipo_persona,nombre,paterno,materno from tb_persona
+
+select dni from TB_PERSONA where dni = ? LIMIT 1;
+-- SELECT id FROM usuarios WHERE correo = ? LIMIT 1
 
 -- --------------------------------------------------------
 --
 -- Estructura de tabla para la tabla usuarios
 --
-select * from usuarios for update;
 CREATE TABLE IF NOT EXISTS usuarios (
   id int(11) NOT NULL,
   usuario varchar(30) NOT NULL,
@@ -216,16 +242,28 @@ ALTER TABLE usuarios
 ALTER TABLE usuarios
   ADD FOREIGN KEY(dni) REFERENCES TB_PERSONA(dni);
 
-select * from usuarios;
+SELECT * FROM tb_persona FOR UPDATE
+select * from usuarios for update;
 
+SELECT u.id, t.cod_tipo_persona, u.password FROM usuarios u,tb_persona t WHERE u.dni = t.dni AND usuario = '' || correo = '' LIMIT 1;
+
+SELECT cod_tipo_persona FROM TB_PERSONA where dni='44752002' LIMIT 1
+
+SELECT activacion FROM usuarios WHERE usuario = 'DFLORES' || correo = ? LIMIT 1;
+
+SELECT id, nombre FROM usuarios WHERE id = 2
+
+SELECT u.id, t.nombre FROM usuarios u,tb_persona t WHERE u.dni = t.dni AND u.id = 2;
+
+SELECT * FROM usuarios WHERE correo = 'slither366@gmail.com' LIMIT 1
+
+SELECT id, nombre FROM usuarios u,tb_persona t WHERE u.dni = t.dni and correo = 'slither366@gmail.com' LIMIT 1;
+
+INSERT INTO usuarios(usuario,password,correo,las) VALUES()
 -- --------------------------------------------------------
 --
 -- Estructura de tabla para la tabla TB_ESTADO_DOCUMENTOS
 --
-/*DROP TABLE TB_ESTADO_DOCUMENTOS;
-DROP TABLE TB_DET_DOCUMENTOS;
-DROP TABLE TB_CAB_DOCUMENTOS;*/
-
 CREATE TABLE IF NOT EXISTS TB_CAB_DOCUMENTOS (
 cod_doc varchar(7) NOT NULL,
 num_doc_ori	varchar(15) NOT NULL,-- numero documento origen
@@ -353,3 +391,19 @@ AND TC.LOC_DEST = TLD.cod_local
 --TP.descripcion,TS.semaforo,TT.num_doc_ori,
 
 SELECT DATEDIFF(SYSDATE(), '2018-05-14') from dual;
+
+SELECT * FROM tb_politicas
+
+SELECT count(te.cod_estado_doc)
+FROM tb_estado_documentos te, tb_semaforo ts, tb_estado_semaforo tes,
+		 tb_politicas tp
+WHERE te.cod_semaforo = ts.cod_semaforo
+AND ts.cod_est_semaforo = tes.cod_est_semaforo
+AND tp.cod_politicas = te.cod_politicas
+AND tp.cod_politicas = '1'
+AND tes.descripcion = 'PENDIENTE';
+
+SELECT * FROM tb_estado_semaforo
+
+SELECT * 
+FROM TB_CAB_DOCUMENTOS
