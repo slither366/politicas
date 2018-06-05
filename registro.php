@@ -8,7 +8,6 @@ include 'funcs/funcs.php';
 	}
 
 	$idUsuario = $_SESSION['id_usuario'];
-
 	$errors = array();
 
 	$sql = "select * from TB_TIPO_PERSONA";
@@ -23,56 +22,58 @@ include 'funcs/funcs.php';
 		$password = $mysqli->real_escape_string($_POST['password']);
 		$con_password = $mysqli->real_escape_string($_POST['con_password']);
 		$email = $mysqli->real_escape_string($_POST['email']);
-		$captcha = $mysqli->real_escape_string($_POST['g-recaptcha-response']);
+		//$captcha = $mysqli->real_escape_string($_POST['g-recaptcha-response']);
 		$tipusu = $mysqli->real_escape_string($_POST['tipo_usu']);
 		$dni = $mysqli->real_escape_string($_POST['dni']);
 
-			$activo = 0;//cuando registremos el usuario siempre este desactivado
-			$tipo_usuario = 2;//que privilegios tendra el usuario. Usuario Normal.
-			$secret = '6LfqIloUAAAAAJAbDBmtGifYx5Gn3jaiKZbs_q-l';//Clave secreta del captcha
-			
-			if(!$captcha){
-				$errors[] = "Por favor verifica el captcha";
-			}
-			
-		if(isNull($nombre,$paterno,$materno/*,$usuario,$password,$con_password,$email*/)){
-			$errors[] = "Debe llenar todos los campos";
-		}
-		if(!isEmail($email)){
-			$errors[] = "Dirección de correo inválida";
-		}
+		$activo = 0;//cuando registremos el usuario siempre este desactivado
+		$tipo_usuario = 2;//que privilegios tendra el usuario. Usuario Normal.
+		/*$secret = '6LfqIloUAAAAAJAbDBmtGifYx5Gn3jaiKZbs_q-l';//Clave secreta del captcha
+		
+		if(!$captcha){
+			$errors[] = "Por favor verifica el captcha";
+		}*/
 
-		if(!validaPassword($password,$con_password)){
-			$errors[] = "Las contraseñas no coinciden";
-		}
+	if(isNull($nombre,$paterno,$materno/*,$usuario,$password,$con_password,$email*/)){
+		$errors[] = "Debe llenar todos los campos";
+	}
+	if(!isEmail($email)){
+		$errors[] = "Dirección de correo inválida";
+	}
 
-		if(usuarioExiste($usuario)){
-			$errors[] = "El nombre de usuario $usuario ya existe!";
-		}
+	if(!validaPassword($password,$con_password)){
+		$errors[] = "Las contraseñas no coinciden";
+	}
 
-		if(emailExiste($email)){
-			$errors[] = "El correo electronico $email ya existe!";
-		}	
+	if(usuarioExiste($usuario)){
+		$errors[] = "El nombre de usuario $usuario ya existe!";
+	}
 
-		if(dniExiste($dni)){
-			$errors[] = "El dni $dni ya existe!";
-		}			
+	if(emailExiste($email)){
+		$errors[] = "El correo electronico $email ya existe!";
+	}	
 
-		if(count($errors) == 0){
-			$arrContextOptions=array(
-				"ssl"=>array(
-					"verify_peer"=>false,
-					"verify_peer_name"=>false,
-				),
-			);
-
+	if(dniExiste($dni)){
+		$errors[] = "El dni $dni ya existe!";
+	}			
+/*
+	if(count($errors) == 0){
+		$arrContextOptions=array(
+			"ssl"=>array(
+				"verify_peer"=>false,
+				"verify_peer_name"=>false,
+			),
+		);*/
+/*
 			$response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$secret&response=$captcha", false, stream_context_create($arrContextOptions));
 			$arr = json_decode($response, TRUE);
+*/
+/*			if($arr['success'])
+{*/
 
-			if($arr['success'])
-			{
-				$pass_hash = hashPassword($password);
-				$token = generateToken();
+	if(count($errors) == 0){
+		$pass_hash = hashPassword($password);
+		$token = generateToken();
 
 						$regPersona = registraPersona($dni,$tipusu,$nombre,$paterno,$materno);//registra y devuelve el dni
 
@@ -96,18 +97,14 @@ include 'funcs/funcs.php';
 						}else{
 							$errors[] = "Error al Registrar Persona";
 						}
-
+					}
 					/*echo '<h2>Thanks</h2>';
 					echo 'Bienvenido '.'<b>'.$arr['hostname'].'</b>';*/
-				} else {
-					echo 'Error al comprobar Captcha';
 				}
-			}
-		}
-		?>
-		<html>
-		<head>
-			<title>Registro</title>
+				?>
+				<html>
+				<head>
+					<title>Registro</title>
 
 			<!--<link rel="stylesheet" href="css/bootstrap.min.css" >
 			<link rel="stylesheet" href="css/bootstrap-theme.min.css" >

@@ -42,6 +42,24 @@ function minMax($min, $max, $valor){
 	}
 }
 
+function personaExiste($dni)
+{
+	global $mysqli;
+
+	$stmt = $mysqli->prepare("SELECT dni FROM tb_persona WHERE dni = ? LIMIT 1");
+	$stmt->bind_param("s", $dni);
+	$stmt->execute();
+	$stmt->store_result();
+	$num = $stmt->num_rows;
+	$stmt->close();
+
+	if ($num > 0){
+		return true;
+	} else {
+		return false;
+	}
+}
+
 function usuarioExiste($usuario)
 {
 	global $mysqli;
@@ -130,9 +148,15 @@ function registraPersona($dni,$cod_tipo_persona,$nombre,$paterno,$materno){
 	$pat = strtoupper($paterno);
 	$mat = strtoupper($materno);
 
-		//$stmt = $mysqli->prepare("INSERT INTO usuarios (usuario, password, nombre, correo, activacion, token, id_tipo) VALUES(?,?,?,?,?,?,?)");
-	$stmt = $mysqli->prepare("INSERT INTO TB_PERSONA (dni,cod_tipo_persona,nombre,paterno,materno,cod_estado,fecha_reg) VALUES(?,?,?,?,?,1,SYSDATE())");
-	$stmt->bind_param('sisss', $dni,$cod_tipo_persona,$nom,$pat,$mat);
+	if(personaExiste($dni)){
+		$stmt= $mysqli->prepare("UPDATE TB_PERSONA 
+			SET cod_tipo_persona=?, nombre=?,paterno=?,materno=?,cod_estado=1,fecha_reg=SYSDATE()
+			WHERE dni = ?");
+		$stmt->bind_param('issss', $cod_tipo_persona,$nom,$pat,$mat,$dni);
+	}else{
+		$stmt = $mysqli->prepare("INSERT INTO TB_PERSONA (dni,cod_tipo_persona,nombre,paterno,materno,cod_estado,fecha_reg) VALUES(?,?,?,?,?,1,SYSDATE())");
+		$stmt->bind_param('sisss', $dni,$cod_tipo_persona,$nom,$pat,$mat);
+	}
 
 	if ($stmt->execute()){
 			return $dni;//$mysqli->insert_id;
@@ -144,7 +168,7 @@ function registraPersona($dni,$cod_tipo_persona,$nombre,$paterno,$materno){
 	function registraUsuario($usuario, $pass_hash, $email, $activo, $token, $dni){
 		
 		global $mysqli;
-		
+
 		$stmt = $mysqli->prepare("INSERT INTO usuarios (usuario, password, correo, activacion, token, dni) VALUES(?,?,?,?,?,?)");
 		$stmt->bind_param('sssiss', $usuario, $pass_hash, $email, $activo, $token, $dni);
 		
@@ -244,7 +268,7 @@ function registraPersona($dni,$cod_tipo_persona,$nombre,$paterno,$materno){
 	{
 		global $mysqli;
 
-		$stmt = $mysqli->prepare("SELECT u.id, t.cod_tipo_persona, u.password FROM usuarios u,tb_persona t WHERE u.dni = t.dni AND usuario = ? || correo = ? LIMIT 1");
+		$stmt = $mysqli->prepare("SELECT u.id, t.cod_tipo_persona, u.password, u.dni, CONCAT(t.nombre,' ',t.paterno) datos FROM usuarios u,tb_persona t WHERE u.dni = t.dni AND usuario = ? || correo = ? LIMIT 1");
 		$stmt->bind_param("ss", $usuario, $usuario);
 		$stmt->execute();
 		$stmt->store_result();
@@ -254,7 +278,7 @@ function registraPersona($dni,$cod_tipo_persona,$nombre,$paterno,$materno){
 			
 			if(isActivo($usuario)){
 				
-				$stmt->bind_result($id, $id_tipo, $passwd);
+				$stmt->bind_result($id, $id_tipo, $passwd, $dni, $datos);
 				$stmt->fetch();
 				
 				$validaPassw = password_verify($password, $passwd);
@@ -264,6 +288,8 @@ function registraPersona($dni,$cod_tipo_persona,$nombre,$paterno,$materno){
 					lastSession($id);
 					$_SESSION['id_usuario'] = $id;
 					$_SESSION['tipo_usuario'] = $id_tipo;
+					$_SESSION['dni'] = $dni;
+					$_SESSION['datos'] = $datos;
 					
 					header("location: welcome.php");
 				} else {
@@ -427,6 +453,39 @@ function registraPersona($dni,$cod_tipo_persona,$nombre,$paterno,$materno){
 		else
 		{
 			return null;	
-		}		
+		}
+	}
+
+	function getGuiasTransPend($codPoli,$jzona)
+	{
+		global $mysqli;
+		//$stmt = $mysqli->prepare("SELECT * FROM $campoFrom WHERE $campoWhere = ? LIMIT 1");
+		$stmt = $mysqli->prepare(
+			"SELECT count(te.cod_estado_doc) CANT_GUIAS 
+			FROM tb_estado_documentos te, tb_semaforo ts, tb_estado_semaforo tes,
+			tb_politicas tp,tb_cab_documentos tc
+			WHERE te.cod_semaforo = ts.cod_semaforo
+			AND ts.cod_est_semaforo = tes.cod_est_semaforo
+			AND tp.cod_politicas = te.cod_politicas
+			AND te.cod_doc = tc.cod_doc
+			AND tp.cod_politicas = ?
+			AND tc.jzona_dest = ?
+			AND tes.descripcion = 'PENDIENTE'");
+
+		$stmt->bind_param('is', $codPoli, $jzona);
+		$stmt->execute();
+		$stmt->store_result();
+		$num = $stmt->num_rows;
+
+		if ($num > 0)
+		{
+			$stmt->bind_result($_campo);
+			$stmt->fetch();
+			return $_campo;
+		}
+		else
+		{
+			return null;	
+		}
 	}
 	

@@ -2,18 +2,17 @@
 session_start();
 require 'funcs/conexion.php';
 include 'funcs/funcs.php';
+	
+	const TIP_PEND_RECEP = 1;
 
 	if(!isset($_SESSION["id_usuario"])){ //Si no ha iniciado sesión redirecciona a index.php
 		header("Location: index.php");
 	}
-	
+
 	$idUsuario = $_SESSION['id_usuario'];
+	$dni = $_SESSION['dni'];
+	$datos = $_SESSION['datos'];
 	
-	//$sql = "SELECT id, nombre FROM usuarios WHERE id = '$idUsuario'";
-	$sql = "SELECT u.id, t.nombre FROM usuarios u,tb_persona t WHERE u.dni = t.dni AND u.id = '$idUsuario'";
-	$result = $mysqli->query($sql);
-	
-	$row = $result->fetch_assoc();	
 	?>
 
 	<html>
@@ -60,7 +59,7 @@ include 'funcs/funcs.php';
 				</div>
 			</div>  
 			<div class="d-flex justify-content-around text-white">
-				<?php echo 'Bienvenid@:'.utf8_decode($row['nombre']); ?>
+				<?php echo 'Bienvenid@:'.$datos; ?>
 			</div>			
 			<div class="d-flex justify-content-around">
 				<a href="logout.php" class="btn btn-danger border-white">Cerrar Sesi&oacute;n</a>
@@ -75,7 +74,7 @@ include 'funcs/funcs.php';
 						<div class="card-body">
 							<h5 class="card-title">Transferencias Pendientes de Recepcion</h5>
 							<p class="card-text"></p>
-							<a href="transferencias/transfer_pendientes.php" class="btn btn-warning btn-lg btn-block">7 Locales</a>
+							<a href="transferencias/transfer_pendientes.php" class="btn btn-warning btn-lg btn-block"><?php echo getGuiasTransPend(1,$_SESSION['dni']); ?> Locales</a>
 						</div>
 					</div>
 				</div>
