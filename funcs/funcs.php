@@ -46,9 +46,16 @@ function personaExiste($dni)
 {
 	global $mysqli;
 
-	$stmt = $mysqli->prepare("SELECT dni FROM tb_persona WHERE dni = ? LIMIT 1");
+	if(!$stmt = $mysqli->prepare("SELECT dni FROM tb_persona WHERE dni = ? LIMIT 1")){
+		die("Revisar Consulta PersonaExiste!");
+	}
+
 	$stmt->bind_param("s", $dni);
-	$stmt->execute();
+
+	if(!$stmt->execute()){
+		die("Fallo la Ejecucion PersonaExiste!");
+	}
+
 	$stmt->store_result();
 	$num = $stmt->num_rows;
 	$stmt->close();
@@ -64,9 +71,16 @@ function usuarioExiste($usuario)
 {
 	global $mysqli;
 
-	$stmt = $mysqli->prepare("SELECT id FROM usuarios WHERE usuario = ? LIMIT 1");
+	if(!$stmt = $mysqli->prepare("SELECT id FROM usuarios WHERE usuario = ? LIMIT 1")){
+		die("Revisar Consulta usuarioExiste!");
+	}
+
 	$stmt->bind_param("s", $usuario);
-	$stmt->execute();
+
+	if(!$stmt->execute()){
+		die("Fallo la Ejecucion usuarioExiste!");
+	}
+
 	$stmt->store_result();
 	$num = $stmt->num_rows;
 	$stmt->close();
@@ -82,9 +96,16 @@ function emailExiste($email)
 {
 	global $mysqli;
 
-	$stmt = $mysqli->prepare("SELECT id FROM usuarios WHERE correo = ? LIMIT 1");
+	if(!$stmt = $mysqli->prepare("SELECT id FROM usuarios WHERE correo = ? LIMIT 1")){
+		die("Revisar Consulta emailExiste!");
+	}
+
 	$stmt->bind_param("s", $email);
-	$stmt->execute();
+
+	if(!$stmt->execute()){
+		die("Fallo la Ejecucion emailExiste!");		
+	}
+
 	$stmt->store_result();
 	$num = $stmt->num_rows;
 	$stmt->close();
@@ -100,9 +121,16 @@ function dniExiste($dni)
 {
 	global $mysqli;
 
-	$stmt = $mysqli->prepare("select dni from TB_PERSONA where dni = ? LIMIT 1");
+	if(!$stmt = $mysqli->prepare("SELECT dni FROM tb_persona WHERE dni = ? LIMIT 1")){
+		die("Revisar Consulta dniExiste!");
+	}
+
 	$stmt->bind_param("s", $dni);
-	$stmt->execute();
+
+	if(!$stmt->execute()){
+		die("Fallo la Ejecucion dniExiste!");		
+	}
+
 	$stmt->store_result();
 	$num = $stmt->num_rows;
 	$stmt->close();
@@ -149,12 +177,16 @@ function registraPersona($dni,$cod_tipo_persona,$nombre,$paterno,$materno){
 	$mat = strtoupper($materno);
 
 	if(personaExiste($dni)){
-		$stmt= $mysqli->prepare("UPDATE TB_PERSONA 
+		if(!$stmt= $mysqli->prepare("UPDATE tb_persona
 			SET cod_tipo_persona=?, nombre=?,paterno=?,materno=?,cod_estado=1,fecha_reg=SYSDATE()
-			WHERE dni = ?");
+			WHERE dni = ?")){
+			die("Revisar Consulta registraPersona!");
+		}
 		$stmt->bind_param('issss', $cod_tipo_persona,$nom,$pat,$mat,$dni);
 	}else{
-		$stmt = $mysqli->prepare("INSERT INTO TB_PERSONA (dni,cod_tipo_persona,nombre,paterno,materno,cod_estado,fecha_reg) VALUES(?,?,?,?,?,1,SYSDATE())");
+		if(!$stmt = $mysqli->prepare("INSERT INTO tb_persona (dni,cod_tipo_persona,nombre,paterno,materno,cod_estado,fecha_reg) VALUES(?,?,?,?,?,1,SYSDATE())")){
+			die("Fallo la Ejecucion registraPersona!");
+		}
 		$stmt->bind_param('sisss', $dni,$cod_tipo_persona,$nom,$pat,$mat);
 	}
 
@@ -169,7 +201,9 @@ function registraPersona($dni,$cod_tipo_persona,$nombre,$paterno,$materno){
 		
 		global $mysqli;
 
-		$stmt = $mysqli->prepare("INSERT INTO usuarios (usuario, password, correo, activacion, token, dni) VALUES(?,?,?,?,?,?)");
+		if(!$stmt = $mysqli->prepare("INSERT INTO usuarios (usuario, password, correo, activacion, token, dni) VALUES(?,?,?,?,?,?)")){
+			die("Revisar Consulta registraUsuario!");
+		}
 		$stmt->bind_param('sssiss', $usuario, $pass_hash, $email, $activo, $token, $dni);
 		
 		if ($stmt->execute()){
@@ -217,9 +251,16 @@ function registraPersona($dni,$cod_tipo_persona,$nombre,$paterno,$materno){
 	function validaIdToken($id, $token){
 		global $mysqli;
 		
-		$stmt = $mysqli->prepare("SELECT activacion FROM usuarios WHERE id = ? AND token = ? LIMIT 1");
+		if(!$stmt = $mysqli->prepare("SELECT activacion FROM usuarios WHERE id = ? AND token = ? LIMIT 1")){
+			die("Revisar Consulta validaIdToken!");
+		}
+
 		$stmt->bind_param("is", $id, $token);
-		$stmt->execute();
+
+		if(!$stmt->execute()){
+			die("Fallo la Ejecucion validaIdToken!");
+		}
+
 		$stmt->store_result();
 		$rows = $stmt->num_rows;
 		
@@ -246,7 +287,10 @@ function registraPersona($dni,$cod_tipo_persona,$nombre,$paterno,$materno){
 	{
 		global $mysqli;
 		
-		$stmt = $mysqli->prepare("UPDATE usuarios SET activacion=1 WHERE id = ?");
+		if(!$stmt = $mysqli->prepare("UPDATE usuarios SET activacion=1 WHERE id = ?")){
+			die("Revisar Consulta activarUsuario!");
+		}
+
 		$stmt->bind_param('s', $id);
 		$result = $stmt->execute();
 		$stmt->close();
@@ -268,12 +312,19 @@ function registraPersona($dni,$cod_tipo_persona,$nombre,$paterno,$materno){
 	{
 		global $mysqli;
 
-		$stmt = $mysqli->prepare("SELECT u.id, t.cod_tipo_persona, u.password, u.dni, CONCAT(t.nombre,' ',t.paterno) datos FROM usuarios u,tb_persona t WHERE u.dni = t.dni AND usuario = ? || correo = ? LIMIT 1");
+		if(!$stmt = $mysqli->prepare("SELECT u.id, t.cod_tipo_persona, u.password, u.dni, CONCAT(t.nombre,' ',t.paterno) datos FROM usuarios u,tb_persona t WHERE u.dni = t.dni AND usuario = ? || correo = ? LIMIT 1")){
+			die("Revisar Consulta login!");
+		}
+
 		$stmt->bind_param("ss", $usuario, $usuario);
-		$stmt->execute();
+
+		if(!$stmt->execute()){
+			die("Fallo la Ejecucion login!");
+		}
+
 		$stmt->store_result();
 		$rows = $stmt->num_rows;
-		
+
 		if($rows > 0) {
 			
 			if(isActivo($usuario)){
@@ -309,9 +360,16 @@ function registraPersona($dni,$cod_tipo_persona,$nombre,$paterno,$materno){
 	{
 		global $mysqli;
 		
-		$stmt = $mysqli->prepare("UPDATE usuarios SET last_session=NOW(), token_password='', password_request=1 WHERE id = ?");
+		if(!$stmt = $mysqli->prepare("UPDATE usuarios SET last_session=NOW(), token_password='', password_request=1 WHERE id = ?")){
+			die("Revisar Consulta lastSession!");
+		}
+
 		$stmt->bind_param('s', $id);
-		$stmt->execute();
+
+		if(!$stmt->execute()){
+			die("Fallo la Ejecucion lastSession!");
+		}
+
 		$stmt->close();
 	}
 	
@@ -319,9 +377,16 @@ function registraPersona($dni,$cod_tipo_persona,$nombre,$paterno,$materno){
 	{
 		global $mysqli;
 		
-		$stmt = $mysqli->prepare("SELECT activacion FROM usuarios WHERE usuario = ? || correo = ? LIMIT 1");
-		$stmt->bind_param('ss', $usuario, $usuario);
-		$stmt->execute();
+		if(!$stmt = $mysqli->prepare("SELECT activacion FROM usuarios WHERE usuario = ? || correo = ? LIMIT 1")){
+			die("Revisar Consulta isActivo!");
+		}else{
+			$stmt->bind_param('ss', $usuario, $usuario);
+		}
+
+		if(!$stmt->execute()){
+			die("Fallo la Ejecucion lastSession!");
+		}
+
 		$stmt->bind_result($activacion);
 		$stmt->fetch();
 		
@@ -341,9 +406,16 @@ function registraPersona($dni,$cod_tipo_persona,$nombre,$paterno,$materno){
 		
 		$token = generateToken();
 		
-		$stmt = $mysqli->prepare("UPDATE usuarios SET token_password=?, password_request=1 WHERE id = ?");
+		if(!$stmt = $mysqli->prepare("UPDATE usuarios SET token_password=?, password_request=1 WHERE id = ?")){
+			die("Revisar Consulta generaTokenPass!");
+		}
+
 		$stmt->bind_param('ss', $token, $user_id);
-		$stmt->execute();
+
+		if(!$stmt->execute()){
+			die("Fallo la Ejecucion generaTokenPass!");
+		}
+
 		$stmt->close();
 		
 		return $token;
@@ -352,11 +424,17 @@ function registraPersona($dni,$cod_tipo_persona,$nombre,$paterno,$materno){
 	function getValor($campo, $campoWhere, $valor)
 	{
 		global $mysqli;
-		
-		//$stmt = $mysqli->prepare("SELECT $campo FROM usuarios WHERE $campoWhere = ? LIMIT 1");
-		$stmt = $mysqli->prepare("SELECT $campo FROM usuarios u,tb_persona t WHERE u.dni = t.dni AND $campoWhere = ? LIMIT 1");
+
+		if(!$stmt = $mysqli->prepare("SELECT $campo FROM usuarios u,tb_persona t WHERE u.dni = t.dni AND $campoWhere = ? LIMIT 1")){
+			die("Revisar Consulta getValor!");
+		}
+
 		$stmt->bind_param('s', $valor);
-		$stmt->execute();
+
+		if(!$stmt->execute()){
+			die("Fallo la Ejecucion getValor!");
+		}
+
 		$stmt->store_result();
 		$num = $stmt->num_rows;
 		
@@ -376,9 +454,16 @@ function registraPersona($dni,$cod_tipo_persona,$nombre,$paterno,$materno){
 	{
 		global $mysqli;
 		
-		$stmt = $mysqli->prepare("SELECT password_request FROM usuarios WHERE id = ?");
+		if(!$stmt = $mysqli->prepare("SELECT password_request FROM usuarios WHERE id = ?")){
+			die("Revisar Consulta getPasswordRequest!");
+		}
+
 		$stmt->bind_param('i', $id);
-		$stmt->execute();
+
+		if(!$stmt->execute()){
+			die("Fallo la Ejecucion getValor!");
+		}
+
 		$stmt->bind_result($_id);
 		$stmt->fetch();
 		
@@ -396,9 +481,16 @@ function registraPersona($dni,$cod_tipo_persona,$nombre,$paterno,$materno){
 		
 		global $mysqli;
 		
-		$stmt = $mysqli->prepare("SELECT activacion FROM usuarios WHERE id = ? AND token_password = ? AND password_request = 1 LIMIT 1");
+		if(!$stmt = $mysqli->prepare("SELECT activacion FROM usuarios WHERE id = ? AND token_password = ? AND password_request = 1 LIMIT 1")){
+			die("Revisar Consulta verificaTokenPass!");
+		}
+
 		$stmt->bind_param('is', $user_id, $token);
-		$stmt->execute();
+
+		if(!$stmt->execute()){
+			die("Fallo la Ejecucion verificaTokenPass!");
+		}
+
 		$stmt->store_result();
 		$num = $stmt->num_rows;
 		
@@ -423,7 +515,11 @@ function registraPersona($dni,$cod_tipo_persona,$nombre,$paterno,$materno){
 	
 	function cambiaPassword($password, $user_id, $token){
 		global $mysqli;
-		$stmt = $mysqli->prepare("UPDATE usuarios SET password = ?, token_password='', password_request=0 WHERE id = ? AND token_password = ?");
+
+		if(!$stmt = $mysqli->prepare("UPDATE usuarios SET password = ?, token_password='', password_request=0 WHERE id = ? AND token_password = ?")){
+			die("Revisar Consulta cambiaPassword!");
+		}
+
 		$stmt->bind_param('sis', $password, $user_id, $token);
 		
 		if($stmt->execute()){
@@ -435,12 +531,19 @@ function registraPersona($dni,$cod_tipo_persona,$nombre,$paterno,$materno){
 	
 	/*$campoFrom,$campoWhere, $valor*/
 	/*"SELECT * FROM $campoFrom WHERE $campoWhere = ? LIMIT 1"*/
-	function getGrupoDatos()
-	{
+	function getGrupoDatos(){
 		global $mysqli;
-		$stmt = $mysqli->prepare("SELECT * FROM $campoFrom WHERE $campoWhere = ? LIMIT 1");
+
+		if(!$stmt = $mysqli->prepare("SELECT * FROM $campoFrom WHERE $campoWhere = ? LIMIT 1")){
+			die("Revisar Consulta getGrupoDatos!");
+		}
+
 		$stmt->bind_param('s', $valor);
-		$stmt->execute();
+
+		if(!$stmt->execute()){
+			die("Fallo la Ejecucion getGrupoDatos!");
+		}
+
 		$stmt->store_result();
 		$num = $stmt->num_rows;
 		
@@ -460,7 +563,7 @@ function registraPersona($dni,$cod_tipo_persona,$nombre,$paterno,$materno){
 	{
 		global $mysqli;
 		//$stmt = $mysqli->prepare("SELECT * FROM $campoFrom WHERE $campoWhere = ? LIMIT 1");
-		$stmt = $mysqli->prepare(
+		if(!$stmt = $mysqli->prepare(
 			"SELECT count(te.cod_estado_doc) CANT_GUIAS 
 			FROM tb_estado_documentos te, tb_semaforo ts, tb_estado_semaforo tes,
 			tb_politicas tp,tb_cab_documentos tc
@@ -470,10 +573,16 @@ function registraPersona($dni,$cod_tipo_persona,$nombre,$paterno,$materno){
 			AND te.cod_doc = tc.cod_doc
 			AND tp.cod_politicas = ?
 			AND tc.jzona_dest = ?
-			AND tes.descripcion = 'PENDIENTE'");
+			AND tes.descripcion = 'PENDIENTE'")){
+			die("Revisar Consulta getGuiasTransPend!");
+		}
 
 		$stmt->bind_param('is', $codPoli, $jzona);
-		$stmt->execute();
+
+		if(!$stmt->execute()){
+			die("Fallo la Ejecucion getGuiasTransPend!");
+		}
+
 		$stmt->store_result();
 		$num = $stmt->num_rows;
 
