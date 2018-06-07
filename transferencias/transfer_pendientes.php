@@ -64,32 +64,33 @@ include '../funcs/funcs.php';
 				</div>
 
 				<div class="row">
-					<div class="card text-white bg-info mb-3 border-white col-sm-6 col-md-4 col-lg-4 col-xl-3">
-						<div class="card-header bg-success">De C58 a </div>
-						<div class="card-body">
-							<a href="transferencias/transfer_pendientes.php" class="btn btn-warning btn-lg btn-block"><b>C54</b></a>
-							<h5 class="card-title">Guias Pend: 10</h5>
-							<p class="card-text">Fech.Crea: 17/05/2018</p>
-						</div>
-					</div>	
 
-					<div class="card text-white bg-info mb-3 border-white col-sm-6 col-md-4 col-lg-4 col-xl-3" >
-						<div class="card-header bg-success">De C58 a </div>
-						<div class="card-body">
-							<a href="transferencias/transfer_pendientes.php" class="btn btn-warning btn-lg btn-block"><b>C54</b></a>
-							<h5 class="card-title">Guias Pend: 10</h5>
-							<p class="card-text">Fech.Crea: 17/05/2018</p>
-						</div>
-					</div>	
+					<?php
+					$datos = getGuiasTransPreDet(1,$_SESSION['dni']);
+					if ($datos){ 
+						foreach($datos as $dato) {
+							?>        	
+							<div class="col-sm-6 col-md-4 col-lg-4 col-xl-3">
+								<div class="card">
+									<div class="card-header bg-success text-white">
+										De: <?php echo $dato["ori"];?> a <b class="h4 font-weight-bold text-dark"><?php echo $dato["dest"];?></b>
+									</div>
+									<div class="card-body">
+										<h5 class="card-title text-secondary">Fech.Crea: <strong>
+											<?php echo $dato["fech"];?>
+										</strong></h5>
+										<a href="transferencias/transfer_pendientes.php" class="btn btn-warning btn-lg btn-block"><b class="h6"><strong>Guias Pend: <?php echo $dato["tot"];?></strong></b></a>
+									</div>
+								</div>
+							</div>                
+							<?php                
+						}
+					} else {
+						echo "No se encontraron datos";
+					}
+					?>
 
-					<div class="card text-white bg-info mb-3 border-white col-sm-6 col-md-4 col-lg-4 col-xl-3" >
-						<div class="card-header bg-success">De C58 a </div>
-						<div class="card-body">
-							<a href="transferencias/transfer_pendientes.php" class="btn btn-warning btn-lg btn-block"><b>C54</b></a>
-							<h5 class="card-title">Guias Pend: 10</h5>
-							<p class="card-text">Fech.Crea: 17/05/2018</p>
-						</div>
-					</div>																	
+
 				</div>
 			</div>
 			<br />

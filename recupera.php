@@ -14,6 +14,8 @@ if(!empty($_POST)){
 	if(emailExiste($email)){
 		$user_id = getValor('id','correo',$email);
 		$nombre = getValor('nombre','correo',$email);
+		echo $user_id;
+		echo $nombre;
 
 		$token = generaTokenPass($user_id);
 

@@ -235,7 +235,7 @@ function registraPersona($dni,$cod_tipo_persona,$nombre,$paterno,$materno){
 		$mail->Username = 'slither366@gmail.com';//Modificar
 		$mail->Password = 'Mifarma2019'; //Modificar
 		
-		$mail->setFrom('slither366@gmail.com', 'Emisor'); //Modificar
+		$mail->setFrom('slither366@gmail.com','Emisor'); //Modificar
 		$mail->addAddress($email, $nombre);
 		
 		$mail->Subject = $asunto;
@@ -559,22 +559,25 @@ function registraPersona($dni,$cod_tipo_persona,$nombre,$paterno,$materno){
 		}
 	}
 
-	function getGuiasTransPend($codPoli,$jzona)
+	function getCantGuiasTransPend($codPoli,$jzona)
 	{
 		global $mysqli;
-		//$stmt = $mysqli->prepare("SELECT * FROM $campoFrom WHERE $campoWhere = ? LIMIT 1");
-		if(!$stmt = $mysqli->prepare(
-			"SELECT count(te.cod_estado_doc) CANT_GUIAS 
-			FROM tb_estado_documentos te, tb_semaforo ts, tb_estado_semaforo tes,
-			tb_politicas tp,tb_cab_documentos tc
-			WHERE te.cod_semaforo = ts.cod_semaforo
-			AND ts.cod_est_semaforo = tes.cod_est_semaforo
-			AND tp.cod_politicas = te.cod_politicas
-			AND te.cod_doc = tc.cod_doc
-			AND tp.cod_politicas = ?
-			AND tc.jzona_dest = ?
-			AND tes.descripcion = 'PENDIENTE'")){
-			die("Revisar Consulta getGuiasTransPend!");
+		$estado = 0;
+		
+		if($codPoli==1){
+			if(!$stmt = $mysqli->prepare(
+				"SELECT count(DISTINCT tc.loc_dest) CANT_LOCALES
+				FROM tb_estado_documentos te, tb_semaforo ts, tb_estado_semaforo tes,
+				tb_politicas tp,tb_cab_documentos tc
+				WHERE te.cod_semaforo = ts.cod_semaforo
+				AND ts.cod_est_semaforo = tes.cod_est_semaforo
+				AND tp.cod_politicas = te.cod_politicas
+				AND te.cod_doc = tc.cod_doc
+				AND tp.cod_politicas = ?
+				AND tc.jzona_dest = ?
+				AND tes.cod_est_semaforo = $estado")){
+				die("Revisar Consulta getGuiasTransPend!");
+			}
 		}
 
 		$stmt->bind_param('is', $codPoli, $jzona);
@@ -591,6 +594,57 @@ function registraPersona($dni,$cod_tipo_persona,$nombre,$paterno,$materno){
 			$stmt->bind_result($_campo);
 			$stmt->fetch();
 			return $_campo;
+		}
+		else
+		{
+			return null;	
+		}
+	}
+
+	function getGuiasTransPreDet($codPoli,$jzona)
+	{
+		global $mysqli;
+		$estado = 0;
+		
+		if($codPoli==1){
+			if(!$stmt = $mysqli->prepare(
+				"SELECT tc.loc_ori,tc.loc_dest,DATE_FORMAT(MIN(fec_crea_origen),'%d/%b/%Y') fecha,count(tc.num_doc_ori) tot_guias
+				FROM tb_estado_documentos te, tb_semaforo ts, tb_estado_semaforo tes,
+				tb_politicas tp,tb_cab_documentos tc
+				WHERE te.cod_semaforo = ts.cod_semaforo
+				AND ts.cod_est_semaforo = tes.cod_est_semaforo
+				AND tp.cod_politicas = te.cod_politicas
+				AND te.cod_doc = tc.cod_doc
+				AND tp.cod_politicas = '1'
+				AND tc.jzona_dest = '40601632'
+				AND tes.descripcion = 'PENDIENTE' 
+				GROUP BY tc.loc_ori,tc.loc_dest")){
+				die("Revisar Consulta getGuiasTransPend!");
+			}
+		}
+
+		//$stmt->bind_param('is', $codPoli, $jzona);
+
+		if(!$stmt->execute()){
+			die("Fallo la Ejecucion getGuiasTransPend!");
+		}
+
+		$stmt->store_result();
+		$num = $stmt->num_rows;
+
+		if ($num > 0)
+		{
+			/*$stmt->bind_result($_campo);
+			$stmt->fetch();
+			return $_campo;*/
+
+			$stmt->bind_result($a,$b,$c,$d);
+			while ($stmt->fetch()) {
+				$outArr[] = ['ori' => $a, 'dest' => $b, 'fech' => $c, 'tot' => $d];
+			}
+
+			$stmt->close();
+			return $outArr;			
 		}
 		else
 		{
