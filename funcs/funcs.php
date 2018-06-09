@@ -615,16 +615,15 @@ function registraPersona($dni,$cod_tipo_persona,$nombre,$paterno,$materno){
 				AND ts.cod_est_semaforo = tes.cod_est_semaforo
 				AND tp.cod_politicas = te.cod_politicas
 				AND te.cod_doc = tc.cod_doc
-				AND tp.cod_politicas = '1'
-				AND tc.jzona_dest = '40601632'
+				AND tp.cod_politicas = ?
+				AND tc.jzona_dest = ?
 				AND tes.descripcion = 'PENDIENTE' 
 				GROUP BY tc.loc_ori,tc.loc_dest")){
 				die("Revisar Consulta getGuiasTransPend!");
 			}
 		}
 
-		//$stmt->bind_param('is', $codPoli, $jzona);
-
+		$stmt->bind_param('is', $codPoli, $jzona);
 		if(!$stmt->execute()){
 			die("Fallo la Ejecucion getGuiasTransPend!");
 		}
@@ -634,13 +633,49 @@ function registraPersona($dni,$cod_tipo_persona,$nombre,$paterno,$materno){
 
 		if ($num > 0)
 		{
-			/*$stmt->bind_result($_campo);
-			$stmt->fetch();
-			return $_campo;*/
-
 			$stmt->bind_result($a,$b,$c,$d);
 			while ($stmt->fetch()) {
 				$outArr[] = ['ori' => $a, 'dest' => $b, 'fech' => $c, 'tot' => $d];
+			}
+
+			$stmt->close();
+			return $outArr;			
+		}
+		else
+		{
+			return null;	
+		}
+	}
+	
+	function getGuiasTransProDet($locOri,$locDest,$zonaDest)
+	{
+		global $mysqli;
+		$estado = 0;
+		
+		if($codPoli==1){
+			if(!$stmt = $mysqli->prepare(
+				"SELECT (@rownum:=@rownum+1) AS rownum,tc.num_doc_ori,tc.total_prod,DATE_FORMAT(MIN(tc.fec_crea_origen),'%d/%b/%Y') AS fecha
+				FROM tb_cab_documentos tc,(SELECT @rownum:=0) r
+				WHERE tc.loc_ori = ? 
+				AND tc.loc_dest = ? 
+				AND tc.jzona_dest= ?")){
+				die("Revisar Consulta getGuiasTransProDet!");
+			}
+		}
+
+		$stmt->bind_param('sss', $locOri, $locDest, $zonaDest);
+		if(!$stmt->execute()){
+			die("Fallo la Ejecucion getGuiasTransProDet!");
+		}
+
+		$stmt->store_result();
+		$num = $stmt->num_rows;
+
+		if ($num > 0)
+		{
+			$stmt->bind_result($row,$doc,$tot,$fech);
+			while ($stmt->fetch()) {
+				$outArr[] = ['num' => $row, 'doc' => $doc, 'tot' => $tot, 'fech' => $fech];
 			}
 
 			$stmt->close();

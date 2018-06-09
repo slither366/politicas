@@ -27,6 +27,7 @@
   margin-top: 30px;
   position: relative;
   box-shadow: -3px 3px 3px 0px #c1c1c1;
+
 }
 .main-box-layout:hover .box-icon-section i{
   font-size:70px;
@@ -196,5 +197,46 @@
 
   </div>
 </div>
+
+
+<div class="card-body" id="loadContent">
+    <div class="table-responsive-xl table-responsive-lg table-responsive-md table-responsive-sm table-responsive">
+        <table class="table table-bordered table-striped table-hover" id="professionalTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Specialization</th>
+                    <th>PCN</th>
+                    <th>Grant Type</th>
+                    <th>Total Grant</th>
+                    <th>Payment Amount</th>
+                    <th>Grant Purpose Amount</th>
+                    <th>Date Expedenture</th>
+                    <th>Company</th>
+                    <th>Year</th>
+                    <th>Month</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Example 1</td>
+                    <td>Example 2</td>
+                    <td>Example 3</td>
+                    <td>Example 4</td>
+                    <td>Example 5</td>
+                    <td>Example 6</td>
+                    <td>Example 7</td>
+                    <td>Example 8</td>
+                    <td>Example 9</td>
+                    <td>Example 10</td>
+                    <td>Example 11</td>
+                    <td>Example 12</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
 </body>
 </html>
