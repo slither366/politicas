@@ -29,10 +29,10 @@
 		}
 		
 		if(count($errors) == 0){		
-			/*echo "Se ha realizado la actualización de tu contraseña con Exito.";
+			echo "Se ha realizado la actualización de tu contraseña con Exito.";
 			echo "<a href='index.php'>Iniciar Sesion</a>";
 			exit;
-			*/
+			
 			
 			/*$_POST["usuario"]="david_flores";
 			$_POST["idUsuario"]=$login->id;

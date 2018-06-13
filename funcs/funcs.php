@@ -608,17 +608,20 @@ function registraPersona($dni,$cod_tipo_persona,$nombre,$paterno,$materno){
 		
 		if($codPoli==1){
 			if(!$stmt = $mysqli->prepare(
-				"SELECT tc.loc_ori,tc.loc_dest,DATE_FORMAT(MIN(fec_crea_origen),'%d/%b/%Y') fecha,count(tc.num_doc_ori) tot_guias
+				"SELECT tc.loc_ori,tc.loc_dest,DATE_FORMAT(MIN(fec_crea_origen),'%d/%b/%Y')
+				fecha,count(tc.num_doc_ori) tot_guias,tl1.descripcion,tl2.descripcion
 				FROM tb_estado_documentos te, tb_semaforo ts, tb_estado_semaforo tes,
-				tb_politicas tp,tb_cab_documentos tc
+				tb_politicas tp,tb_cab_documentos tc,tb_locales tl1,tb_locales tl2
 				WHERE te.cod_semaforo = ts.cod_semaforo
 				AND ts.cod_est_semaforo = tes.cod_est_semaforo
 				AND tp.cod_politicas = te.cod_politicas
 				AND te.cod_doc = tc.cod_doc
+				AND tl1.cod_local = tc.loc_ori
+				AND tl2.cod_local = tc.loc_dest
 				AND tp.cod_politicas = ?
 				AND tc.jzona_dest = ?
 				AND tes.descripcion = 'PENDIENTE' 
-				GROUP BY tc.loc_ori,tc.loc_dest")){
+				GROUP BY tc.loc_ori,tc.loc_dest;")){
 				die("Revisar Consulta getGuiasTransPend!");
 			}
 		}
@@ -633,9 +636,9 @@ function registraPersona($dni,$cod_tipo_persona,$nombre,$paterno,$materno){
 
 		if ($num > 0)
 		{
-			$stmt->bind_result($a,$b,$c,$d);
+			$stmt->bind_result($a,$b,$c,$d,$e,$f);
 			while ($stmt->fetch()) {
-				$outArr[] = ['ori' => $a, 'dest' => $b, 'fech' => $c, 'tot' => $d];
+				$outArr[] = ['ori' => $a, 'dest' => $b, 'fech' => $c, 'tot' => $d, 'oriDesc' => $e, 'destDesc' => $f];
 			}
 
 			$stmt->close();
@@ -646,26 +649,30 @@ function registraPersona($dni,$cod_tipo_persona,$nombre,$paterno,$materno){
 			return null;	
 		}
 	}
-	
-	function getGuiasTransProDet($locOri,$locDest,$zonaDest)
+
+	function getGuiasTransProDet($ori,$dest,$dniDest)
 	{
 		global $mysqli;
 		$estado = 0;
-		
+		$codPoli = 1;
+
 		if($codPoli==1){
 			if(!$stmt = $mysqli->prepare(
-				"SELECT (@rownum:=@rownum+1) AS rownum,tc.num_doc_ori,tc.total_prod,DATE_FORMAT(MIN(tc.fec_crea_origen),'%d/%b/%Y') AS fecha
-				FROM tb_cab_documentos tc,(SELECT @rownum:=0) r
-				WHERE tc.loc_ori = ? 
-				AND tc.loc_dest = ? 
-				AND tc.jzona_dest= ?")){
-				die("Revisar Consulta getGuiasTransProDet!");
+				"SELECT (@rownum:=@rownum+1) AS rownum,tc.num_doc_ori,tc.total_prod,DATE_FORMAT(tc.fec_crea_origen,'%d/%b/%Y') fecha
+				FROM tb_cab_documentos tc,(SELECT @rownum:=0) r,tb_locales tl1,tb_locales tl2
+				WHERE tl1.cod_local = tc.loc_ori
+				AND tl2.cod_local = tc.loc_dest
+				AND tc.loc_ori = ?
+				AND tc.loc_dest = ?
+				AND tc.jzona_dest= ?
+				ORDER BY tc.num_doc_ori")){
+				die("Revisar Consulta getGuiasTransPend!");
 			}
 		}
 
-		$stmt->bind_param('sss', $locOri, $locDest, $zonaDest);
+		$stmt->bind_param('sss', $ori,$dest,$dniDest);
 		if(!$stmt->execute()){
-			die("Fallo la Ejecucion getGuiasTransProDet!");
+			die("Fallo la Ejecucion getGuiasTransPend!");
 		}
 
 		$stmt->store_result();
@@ -673,9 +680,9 @@ function registraPersona($dni,$cod_tipo_persona,$nombre,$paterno,$materno){
 
 		if ($num > 0)
 		{
-			$stmt->bind_result($row,$doc,$tot,$fech);
+			$stmt->bind_result($a,$b,$c,$d);
 			while ($stmt->fetch()) {
-				$outArr[] = ['num' => $row, 'doc' => $doc, 'tot' => $tot, 'fech' => $fech];
+				$outArr[] = ['num' => $a, 'doc' => $b, 'tot' => $c, 'fech' => $d];
 			}
 
 			$stmt->close();
