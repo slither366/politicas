@@ -56,20 +56,6 @@ include 'funcs/funcs.php';
 	if(dniExiste($dni)){
 		$errors[] = "El dni $dni ya existe!";
 	}			
-/*
-	if(count($errors) == 0){
-		$arrContextOptions=array(
-			"ssl"=>array(
-				"verify_peer"=>false,
-				"verify_peer_name"=>false,
-			),
-		);*/
-/*
-			$response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$secret&response=$captcha", false, stream_context_create($arrContextOptions));
-			$arr = json_decode($response, TRUE);
-*/
-/*			if($arr['success'])
-{*/
 
 	if(count($errors) == 0){
 		$pass_hash = hashPassword($password);
@@ -118,13 +104,11 @@ include 'funcs/funcs.php';
 
 			<style>
 			body {
-				padding-top: 20px;
+				padding-top: 0px;
 				padding-bottom: 20px;
 			}
 
 			.slider{
-
-				background:#d5f4e6;
 				background-size: cover;
 				background-position: center;
 
@@ -135,128 +119,126 @@ include 'funcs/funcs.php';
 	</head>
 
 	<body>
-		<div class="container">
+		<nav class="navbar navbar-expand-sm navbar-expand-md navbar-expand-lg navbar-dark bg-primary sticky-top">
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>  
 
-			<nav class="navbar navbar-expand-sm navbar-expand-md navbar-expand-lg navbar-dark bg-primary sticky-top">
-				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-					<span class="navbar-toggler-icon"></span>
-				</button>  
+			<a class="navbar-brand" href="#">
+				<img src="images/logo.png" width="40" height="30" class="d-inline-block align-top" alt="Logo">
+				TaskManager
+			</a>
 
-				<a class="navbar-brand" href="#">
-					<img src="images/logo.png" width="40" height="30" class="d-inline-block align-top" alt="Logo">
-					TaskManager
-				</a>
+			<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+				<div class="navbar-nav mr-auto ml-auto text-center">
+					<a class="nav-item nav-link active" href="welcome.php">Inicio</a>
 
-				<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-					<div class="navbar-nav mr-auto ml-auto text-center">
-						<a class="nav-item nav-link active" href="welcome.php">Inicio</a>
-
-						<?php if($_SESSION['tipo_usuario']==1) { ?>
-							<a class="nav-item nav-link" href="registro.php">Registrar Usuario</a>
-						<?php } ?>
-					</div>
-				</div>  
-				<div class="d-flex justify-content-around">
-					<a href="logout.php" class="btn btn-danger border-white">Cerrar Sesi&oacute;n</a>
+					<?php if($_SESSION['tipo_usuario']==1) { ?>
+						<a class="nav-item nav-link" href="registro.php">Registrar Usuario</a>
+					<?php } ?>
 				</div>
-			</nav>	
+			</div>  
+			<div class="d-flex justify-content-around">
+				<a href="logout.php" class="btn btn-danger border-white">Cerrar Sesi&oacute;n</a>
+			</div>
+		</nav>	
 
 
-			<div class="jumbotron" style="background-color:#d5f4e6;">
-				<div class="row slider align-items-center justify-content-center">
-					<div class=" col-xl-5 col-lg-6 col-md-8 col-sm-10 col-12">
-						<div class="card border-white">
-							<div class="card-header bg-primary text-center">
-								<h5 class="card-title font-weight-light text-light">Registrar Usuario</h5>
-							</div>
+		<div class="jumbotron">
+			<div class="row slider align-items-center justify-content-center">
+				<div class=" col-xl-5 col-lg-6 col-md-8 col-sm-10 col-12">
+					<div class="card border-white">
+						<div class="card-header bg-primary text-center">
+							<h5 class="card-title font-weight-light text-light">Registrar Usuario</h5>
+						</div>
 
-							<div class="card-body">
+						<div class="card-body">
 
-								<div style="display:none" id="login-alert" class="alert alert-danger col-sm-12"></div>
-								<form id="signupform" class="form-horizontal" role="form" action="<?php $_SERVER['PHP_SELF'] ?>" method="POST" autocomplete="off">
+							<div style="display:none" id="login-alert" class="alert alert-danger col-sm-12"></div>
+							<form id="signupform" class="form-horizontal" role="form" action="<?php $_SERVER['PHP_SELF'] ?>" method="POST" autocomplete="off">
 
-									<div id="signupalert" style="display:none" class="alert alert-danger">
-										<p>Error:</p>
-										<span></span>
-									</div>
+								<div id="signupalert" style="display:none" class="alert alert-danger">
+									<p>Error:</p>
+									<span></span>
+								</div>
 
-									<div class="form-group">
-										<label for="nombre">Nombre:</label>
-										<input type="text" class="form-control" name="nombre" placeholder="Nombre" value="<?php if(isset($nombre)) echo $nombre; ?>" required >
+								<div class="form-group">
+									<label for="nombre">Nombre:</label>
+									<input type="text" class="form-control" name="nombre" placeholder="Nombre" value="<?php if(isset($nombre)) echo $nombre; ?>" required >
 
-									</div>
-
-
-									<div class="form-group">
-										<label for="paterno">Paterno:</label>
-										<input type="text" class="form-control" name="paterno" placeholder="paterno" value="<?php if(isset($paterno)) echo $paterno; ?>" required >
-									</div>	
-
-									<div class="form-group">
-										<label for="materno">Materno:</label>
-
-										<input type="text" class="form-control" name="materno" placeholder="materno" value="<?php if(isset($materno)) echo $materno; ?>" required >
-									</div>			
-
-									<div class="form-group">
-										<label for="dni">Dni:</label>
-										<input type="text" class="form-control" name="dni" placeholder="dni" value="<?php if(isset($dni)) echo $dni; ?>" required >
-									</div>
-
-									<div class="form-group">
-										<label for="usuario">Usuario</label>
-										<input type="text" class="form-control" name="usuario" placeholder="Usuario" value="<?php if(isset($usuario)) echo $usuario; ?>" >
-									</div>
-
-									<div class="form-group">
-										<label for="password">Password</label>
-										<input type="password" class="form-control" name="password" placeholder="Password" >
-									</div>
-
-									<div class="form-group">
-										<label for="con_password">Confirmar Password</label>
-										<input type="password" class="form-control" name="con_password" placeholder="Confirmar Password" >
-									</div>
-
-									<div class="form-group">
-										<label for="email">Email</label>
-										<input type="email" class="form-control" name="email" placeholder="Email" value="<?php if(isset($email)) echo $email; ?>" >
-									</div>
-
-									<div class="form-group">
-										<label for="tipo_usu">Tipo Usuario</label>
-										<select class="form-control" name="tipo_usu" id="tipo_usu">
-											<option value="0">Seleccionar Estado</option>
-											<?php while($row = $resultado->fetch_assoc()) { ?>
-												<option value="<?php echo $row['cod_tipo_persona']; ?>"><?php echo $row['descripcion']; ?></option>
-											<?php } ?>
-										</select>
-									</div>		
-
-									<div class="form-group">
-										<label for="captcha"></label>
-										<div class="g-recaptcha col-md-9" data-sitekey="6LfqIloUAAAAANZFa6h8JqLBp1DCc-hfVaREi2IE"></div>
-									</div>
-
-									<div class="form-group d-flex justify-content-center">                                   
-										<button id="btn-signup" type="submit" class="btn btn-success">Enviar</button>
-									</div>
-								</form>
+								</div>
 
 
-								<?php
-								echo resultBlock($errors);
-								?>
-								<div class="d-flex justify-content-end">
-									<span class="badge badge-pill badge-warning"><a href="index.php" class="text-white">Regresar Inicio!</a></span>
+								<div class="form-group">
+									<label for="paterno">Paterno:</label>
+									<input type="text" class="form-control" name="paterno" placeholder="paterno" value="<?php if(isset($paterno)) echo $paterno; ?>" required >
 								</div>	
-							</div>
+
+								<div class="form-group">
+									<label for="materno">Materno:</label>
+
+									<input type="text" class="form-control" name="materno" placeholder="materno" value="<?php if(isset($materno)) echo $materno; ?>" required >
+								</div>			
+
+								<div class="form-group">
+									<label for="dni">Dni:</label>
+									<input type="text" class="form-control" name="dni" placeholder="dni" value="<?php if(isset($dni)) echo $dni; ?>" required >
+								</div>
+
+								<div class="form-group">
+									<label for="usuario">Usuario</label>
+									<input type="text" class="form-control" name="usuario" placeholder="Usuario" value="<?php if(isset($usuario)) echo $usuario; ?>" >
+								</div>
+
+								<div class="form-group">
+									<label for="password">Password</label>
+									<input type="password" class="form-control" name="password" placeholder="Password" >
+								</div>
+
+								<div class="form-group">
+									<label for="con_password">Confirmar Password</label>
+									<input type="password" class="form-control" name="con_password" placeholder="Confirmar Password" >
+								</div>
+
+								<div class="form-group">
+									<label for="email">Email</label>
+									<input type="email" class="form-control" name="email" placeholder="Email" value="<?php if(isset($email)) echo $email; ?>" >
+								</div>
+
+								<div class="form-group">
+									<label for="tipo_usu">Tipo Usuario</label>
+									<select class="form-control" name="tipo_usu" id="tipo_usu">
+										<option value="0">Seleccionar Estado</option>
+										<?php while($row = $resultado->fetch_assoc()) { ?>
+											<option value="<?php echo $row['cod_tipo_persona']; ?>"><?php echo $row['descripcion']; ?></option>
+										<?php } ?>
+									</select>
+								</div>		
+
+								<div class="form-group">
+									<label for="captcha"></label>
+									<div class="g-recaptcha col-md-9" data-sitekey="6LfqIloUAAAAANZFa6h8JqLBp1DCc-hfVaREi2IE"></div>
+								</div>
+
+								<div class="form-group d-flex justify-content-center">                                   
+									<button id="btn-signup" type="submit" class="btn btn-success">Enviar</button>
+								</div>
+							</form>
+
+
+							<?php
+							echo resultBlock($errors);
+							?>
+							<div class="d-flex justify-content-end">
+								<span class="badge badge-pill badge-warning"><a href="index.php" class="text-white">Regresar Inicio!</a></span>
+							</div>	
 						</div>
 					</div>
-
 				</div>
+
 			</div>
 		</div>
+
 		
 		<!-- Optional JavaScript -->
 		<!-- jQuery first, then Popper.js, then Bootstrap JS -->

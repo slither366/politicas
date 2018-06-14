@@ -605,7 +605,7 @@ function registraPersona($dni,$cod_tipo_persona,$nombre,$paterno,$materno){
 	{
 		global $mysqli;
 		$estado = 0;
-		
+
 		if($codPoli==1){
 			if(!$stmt = $mysqli->prepare(
 				"SELECT tc.loc_ori,tc.loc_dest,DATE_FORMAT(MIN(fec_crea_origen),'%d/%b/%Y')
