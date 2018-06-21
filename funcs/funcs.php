@@ -213,6 +213,7 @@ function registraPersona($dni,$cod_tipo_persona,$nombre,$paterno,$materno){
 		}
 	}
 	
+	//Enviar correo solo a 1 persona
 	function enviarEmail($email, $nombre, $asunto, $cuerpo){
 		
 		require_once 'PHPMailer/PHPMailerAutoload.php';
@@ -221,7 +222,7 @@ function registraPersona($dni,$cod_tipo_persona,$nombre,$paterno,$materno){
 		$mail->isSMTP();
 		$mail->SMTPAuth = true;
 		$mail->SMTPSecure = 'tls'; //Modificar
-		$mail->Host = 'smtp.gmail.com'; //Modificar
+		$mail->Host = gethostbyname('smtp.gmail.com');; //Modificar
 		$mail->Port = 587; //Modificar
 		
 		$mail->SMTPOptions = array(
@@ -231,22 +232,71 @@ function registraPersona($dni,$cod_tipo_persona,$nombre,$paterno,$materno){
 				'allow_self_signed' => true
 			)
 		);
+
+		$mail->Username = 'dfloreslearner@gmail.com';//Correo del Servidor
+		$mail->Password = 'FLLUD001'; //Clave Correo Servidor
 		
-		$mail->Username = 'slither366@gmail.com';//Modificar
-		$mail->Password = 'Mifarma2019'; //Modificar
+		$mail->setFrom('dfloreslearner@gmail.com','Dr. David Flores');//Nombre del Usuario que Envía
+		$mail->addAddress($email, $nombre);//Correo y Usuario al que se envía
 		
-		$mail->setFrom('slither366@gmail.com','Emisor'); //Modificar
-		$mail->addAddress($email, $nombre);
-		
-		$mail->Subject = $asunto;
-		$mail->Body    = $cuerpo;
+		$mail->Subject = $asunto;//asunto del correo
+		$mail->Body    = $cuerpo;//contenido del correo
 		$mail->IsHTML(true);
 		
-		if($mail->send())
+		if($mail->send()){
 			return true;
-		else
+		}else{
+			echo 'Message could not be sent.';
+			echo 'Mailer Error: ' . $mail->ErrorInfo;			
 			return false;
+		}
 	}
+
+	//Enviar correo a varios Locales
+	function enviarVariosEmail($arrayLocales, $asunto, $cuerpo){
+		
+		require_once 'PHPMailer/PHPMailerAutoload.php';
+		
+		$mail = new PHPMailer();
+		$mail->isSMTP();
+		$mail->SMTPAuth = true;
+		$mail->SMTPSecure = 'tls'; //Modificar
+		$mail->Host = gethostbyname('smtp.gmail.com');; //Modificar
+		$mail->Port = 587; //Modificar
+		
+		$mail->SMTPOptions = array(
+			'ssl' => array(
+				'verify_peer' => false,
+				'verify_peer_name' => false,
+				'allow_self_signed' => true
+			)
+		);
+
+		//#### Revisar Siempre Bien estos 2 datos que si no son los correctos nunca enviará correo
+		//#### También validar "Permitir el acceso de aplicaciones menos seguras" como en GMAIL
+		$mail->Username = 'dfloreslearner@gmail.com';//Correo del Servidor
+		$mail->Password = 'FLLUD001'; //Clave Correo Servidor 
+		
+		$mail->setFrom('dfloreslearner@gmail.com','Dr. David Flores');//Nombre del Usuario que Envía
+
+		foreach ($arrayLocales as list($email, $nombre)) {
+			$mail->addAddress($email, $nombre);//Correo y Usuario al que se envía
+		}
+
+		$mail->Subject = $asunto;//asunto del correo
+		$mail->Body    = $cuerpo;//contenido del correo
+		$mail->IsHTML(true);
+		
+		if($mail->send()){
+			return true;
+		}else{
+			echo 'Message could not be sent.';
+			echo 'Mailer Error: ' . $mail->ErrorInfo;			
+			return false;
+		}
+	}
+
+
 	
 	function validaIdToken($id, $token){
 		global $mysqli;
@@ -608,16 +658,17 @@ function registraPersona($dni,$cod_tipo_persona,$nombre,$paterno,$materno){
 
 		if($codPoli==1){
 			if(!$stmt = $mysqli->prepare(
-				"SELECT tc.loc_ori,tc.loc_dest,DATE_FORMAT(MIN(fec_crea_origen),'%d/%b/%Y')
-				fecha,count(tc.num_doc_ori) tot_guias,tl1.descripcion,tl2.descripcion
+				"SELECT tc.loc_ori,tc.loc_dest,DATE_FORMAT(MIN(fec_crea_origen),'%d/%b/%Y')fecha,
+				count(tc.num_doc_ori) tot_guias,tlOri.descripcion desOri,tlDest.descripcion desDest,
+				tlDest.correo correoDest
 				FROM tb_estado_documentos te, tb_semaforo ts, tb_estado_semaforo tes,
-				tb_politicas tp,tb_cab_documentos tc,tb_locales tl1,tb_locales tl2
+				tb_politicas tp,tb_cab_documentos tc,tb_locales tlOri,tb_locales tlDest
 				WHERE te.cod_semaforo = ts.cod_semaforo
 				AND ts.cod_est_semaforo = tes.cod_est_semaforo
 				AND tp.cod_politicas = te.cod_politicas
 				AND te.cod_doc = tc.cod_doc
-				AND tl1.cod_local = tc.loc_ori
-				AND tl2.cod_local = tc.loc_dest
+				AND tlOri.cod_local = tc.loc_ori
+				AND tlDest.cod_local = tc.loc_dest
 				AND tp.cod_politicas = ?
 				AND tc.jzona_dest = ?
 				AND tes.descripcion = 'PENDIENTE' 
@@ -636,9 +687,9 @@ function registraPersona($dni,$cod_tipo_persona,$nombre,$paterno,$materno){
 
 		if ($num > 0)
 		{
-			$stmt->bind_result($a,$b,$c,$d,$e,$f);
+			$stmt->bind_result($a,$b,$c,$d,$e,$f,$g);
 			while ($stmt->fetch()) {
-				$outArr[] = ['ori' => $a, 'dest' => $b, 'fech' => $c, 'tot' => $d, 'oriDesc' => $e, 'destDesc' => $f];
+				$outArr[] = ['ori' => $a, 'dest' => $b, 'fech' => $c, 'tot' => $d, 'oriDesc' => $e, 'destDesc' => $f, 'destCorreo' => $g];
 			}
 
 			$stmt->close();

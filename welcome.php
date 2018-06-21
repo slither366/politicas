@@ -35,6 +35,23 @@ const TIP_PEND_RECEP = 1;
 			background-color: #E9ECEF;
 		}
 
+		#altoCard{
+			height: 180px;
+		}
+
+		#titCardTrans{
+			height: 90px;
+			color: #148c9f;
+		}
+
+		#titH5{
+			font-weight: bold;
+		}
+
+		#btnH5{
+			font-weight: bold;
+		}
+
 		.box-contorno{
 			border-style: solid;
 			border-width: thick;
@@ -44,11 +61,15 @@ const TIP_PEND_RECEP = 1;
 			font-size: 15px;
 		}
 
+		.card-title{
+			text-align: center;
+		}
+
 		@media (min-width: 100px) and (max-width: 400px){
 			.Titulo{
 				font-size:20px;
 				font-weight: bold;
-			}		
+			}
 		</style>
 	</head>
 
@@ -89,105 +110,127 @@ const TIP_PEND_RECEP = 1;
 			</div>
 
 			<div class="row mt-4"> <!-- Inicia el margen desde el Top-->
-				<div class="col-sm-6 col-md-4 col-lg-4 col-xl-3 mt-3">
-					<div class="card" style="height: 200px;">
-						<div class="card-body">
-							<h5 class="card-title">Transferencias Pendientes de Recepcion</h5>
-							<p class="card-text"></p>
-							<a href="transferencias/transfer_pendientes.php" class="btn btn-warning btn-lg btn-block"><?php echo getCantGuiasTransPend(1,$_SESSION['dni']); ?> Locales</a>
-						</div>
-					</div>
-				</div>
 
 				<div class="col-sm-6 col-md-4 col-lg-4 col-xl-3 mt-3">
-					<div class="card" style="height: 200px;">
+					<div class="card" id="altoCard"">
 						<div class="card-body">
-							<h5 class="card-title">Deposito Bancario Pendiente</h5>
-							<p class="card-text"></p>
-							<a href="#" class="btn btn-success btn-lg btn-block">0 Local</a>
+							<div id="titCardTrans">
+								<h5 class="card-title" id="titH5">Transferencias Pendientes de Recepcion</h5>
+							</div>
+							<div>
+								<a href="transferencias/transfer_pendientes.php" class="btn btn-warning btn-lg btn-block" id="btnH5"><?php echo getCantGuiasTransPend(1,$_SESSION['dni']); ?> Locales</a></div>
+							</div>
+						</div>
+					</div>		
+
+					<div class="col-sm-6 col-md-4 col-lg-4 col-xl-3 mt-3">
+						<div class="card" id="altoCard"">
+							<div class="card-body">
+								<div id="titCardTrans">
+									<h5 class="card-title" id="titH5">Deposito Bancario Pendiente</h5>
+								</div>
+								<div>
+									<a href="#" class="btn btn-success btn-lg btn-block" id="btnH5">0 Local</a>
+								</div>
+							</div>
 						</div>
 					</div>
-				</div>
 
-				<div class="col-sm-6 col-md-4 col-lg-4 col-xl-3 mt-3">
-					<div class="card" style="height: 200px;">
-						<div class="card-body">
-							<h5 class="card-title">Remesas Fuera de Rango  --------</h5>
-							<p class="card-text"></p>
-							<a href="#" class="btn btn-danger btn-lg btn-block">0 Locales</a>
+					<div class="col-sm-6 col-md-4 col-lg-4 col-xl-3 mt-3">
+						<div class="card" id="altoCard">
+							<div class="card-body">
+								<div id="titCardTrans">
+									<h5 class="card-title" id="titH5">Remesas Fuera de Rango</h5>
+								</div>
+								<div>
+									<a href="#" class="btn btn-success btn-lg btn-block" id="btnH5">0 Local</a>
+								</div>
+							</div>
 						</div>
 					</div>
-				</div>  
 
-				<div class="col-sm-6 col-md-4 col-lg-4 col-xl-3 mt-3">
-					<div class="card" style="height: 200px;">
-						<div class="card-body">
-							<h5 class="card-title">Cierre de dia Pendiente  --------</h5>
-							<p class="card-text"></p>
-							<a href="#" class="btn btn-success btn-lg btn-block">0 Locales</a>
+					<div class="col-sm-6 col-md-4 col-lg-4 col-xl-3 mt-3">
+						<div class="card" id="altoCard">
+							<div class="card-body">
+								<div id="titCardTrans">
+									<h5 class="card-title" id="titH5">Cierre de dia Pendiente</h5>
+								</div>
+								<div>
+									<a href="#" class="btn btn-success btn-lg btn-block" id="btnH5">0 Local</a>
+								</div>
+							</div>
+						</div>
+					</div>		
+
+					<div class="col-sm-6 col-md-4 col-lg-4 col-xl-3 mt-3">
+						<div class="card" id="altoCard">
+							<div class="card-body">
+								<div id="titCardTrans">
+									<h5 class="card-title" id="titH5">Acumulacion de Deficit Excesivo</h5>
+								</div>
+								<div>
+									<a href="#" class="btn btn-success btn-lg btn-block" id="btnH5">0 Local</a>
+								</div>
+							</div>
+						</div>
+					</div>							
+
+					<div class="col-sm-6 col-md-4 col-lg-4 col-xl-3 mt-3">
+						<div class="card" id="altoCard">
+							<div class="card-body">
+								<div id="titCardTrans">
+									<h5 class="card-title" id="titH5">Cuadratura de Anulacion Pendiente</h5>
+								</div>
+								<div>
+									<a href="#" class="btn btn-success btn-lg btn-block" id="btnH5">0 Local</a>
+								</div>
+							</div>
+						</div>
+					</div>	
+
+					<div class="col-sm-6 col-md-4 col-lg-4 col-xl-3 mt-3">
+						<div class="card" id="altoCard">
+							<div class="card-body">
+								<div id="titCardTrans">
+									<h5 class="card-title" id="titH5">ASL's Pendientes</h5>
+								</div>
+								<div>
+									<a href="#" class="btn btn-success btn-lg btn-block" id="btnH5">0 Local</a>
+								</div>
+							</div>
 						</div>
 					</div>
-				</div>
 
-				<div class="col-sm-6 col-md-4 col-lg-4 col-xl-3 mt-3">
-					<div class="card" style="height: 200px;">
-						<div class="card-body">
-							<h5 class="card-title">Acumulacion de Deficit Excesivo  --------</h5>
-							<p class="card-text"></p>
-							<a href="#" class="btn btn-warning btn-lg btn-block">0 Locales</a>
+					<div class="col-sm-6 col-md-4 col-lg-4 col-xl-3 mt-3">
+						<div class="card" id="altoCard">
+							<div class="card-body">
+								<div id="titCardTrans">
+									<h5 class="card-title" id="titH5">Cierre de día Pendiente</h5>
+								</div>
+								<div>
+									<a href="#" class="btn btn-success btn-lg btn-block" id="btnH5">0 Local</a>
+								</div>
+							</div>
 						</div>
 					</div>
-				</div>
 
-				<div class="col-sm-6 col-md-4 col-lg-4 col-xl-3 mt-3">
-					<div class="card" style="height: 200px;">
-						<div class="card-body">
-							<h5 class="card-title">Cuadratura de Anulacion Pendiente</h5>
-							<p class="card-text"></p>
-							<a href="#" class="btn btn-danger btn-lg btn-block">0 Locales</a>
+					<div class="col-sm-6 col-md-4 col-lg-4 col-xl-3 mt-3">
+						<div class="card" id="altoCard">
+							<div class="card-body">
+								<div id="titCardTrans">
+									<h5 class="card-title" id="titH5">Acumulacion de Deficit Excesivo</h5>
+								</div>
+								<div>
+									<a href="#" class="btn btn-success btn-lg btn-block" id="btnH5">0 Local</a>
+								</div>
+							</div>
 						</div>
 					</div>
-				</div>
 
-				<div class="col-sm-6 col-md-4 col-lg-4 col-xl-3 mt-3">
-					<div class="card" style="height: 200px;">
-						<div class="card-body">
-							<h5 class="card-title">ASL's Pendientes  ----------------</h5>
-							<p class="card-text"></p>
-							<a href="#" class="btn btn-warning btn-lg btn-block">0 Locales</a>
-						</div>
-					</div>
-				</div>
-
-				<div class="col-sm-6 col-md-4 col-lg-4 col-xl-3 mt-3">
-					<div class="card" style="height: 200px;">
-						<div class="card-body">
-							<h5 class="card-title">Cierre de día Pendiente  -----------</h5>
-							<p class="card-text"></p>
-							<a href="#" class="btn btn-success btn-lg btn-block">0 Locales</a>
-						</div>
-					</div>
-				</div>
-
-				<div class="col-sm-6 col-md-4 col-lg-4 col-xl-3 mt-3">
-					<div class="card" style="height: 200px;">
-						<div class="card-body">
-							<h5 class="card-title">Acumulacion de Deficit Excesivo -----</h5>
-							<p class="card-text"></p>
-							<a href="#" class="btn btn-success btn-lg btn-block">0 Locales</a>
-						</div>
-					</div>
-				</div>
-
-			</div>
-		</div>
-
-
-
-		<!-- Optional JavaScript -->
-		<!-- jQuery first, then Popper.js, then Bootstrap JS -->
-		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-		<script src="bootstrap/js/bootstrap.js"></script>	
-	</body>
-	</html>
+					<!-- Optional JavaScript -->
+					<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+					<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+					<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+					<script src="bootstrap/js/bootstrap.js"></script>	
+				</body>
+				</html>

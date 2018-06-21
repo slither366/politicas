@@ -3,18 +3,16 @@ USE db_politicas;
 
 CREATE TABLE IF NOT EXISTS tb_locales(
 cod_local varchar(5) NOT NULL,
-cod_cia	varchar(3) NOT NULL,
-descripcion varchar(200) NOT NULL
+cod_cia varchar(3) NOT NULL,
+descripcion varchar(200) NOT NULL,
+correo  varchar(200) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-ALTER TABLE tb_locales
-  ADD PRIMARY KEY (cod_local);
-
-INSERT INTO tb_locales VALUES('C58','007','C58-PUNO LIMA 4');
-INSERT INTO tb_locales VALUES('C54','007','C54-JULIACA SAN ROMAN 2');
-INSERT INTO tb_locales VALUES('C55','007','JULIACA SAN ROMAN 3');
-INSERT INTO tb_locales VALUES('D61','007','JULIACA HUANCANE');
-INSERT INTO tb_locales VALUES('T91','007','PUNO LOS INCAS');
+INSERT INTO tb_locales VALUES('C58','007','C58-PUNO LIMA 4','dflores@mifarma.com.pe');
+INSERT INTO tb_locales VALUES('C54','007','C54-JULIACA SAN ROMAN 2','dflores@mifarma.com.pe');
+INSERT INTO tb_locales VALUES('C55','007','JULIACA SAN ROMAN 3','dflores@mifarma.com.pe');
+INSERT INTO tb_locales VALUES('D61','007','JULIACA HUANCANE','dflores@mifarma.com.pe');
+INSERT INTO tb_locales VALUES('T91','007','PUNO LOS INCAS','dflores@mifarma.com.pe');
 
 CREATE TABLE IF NOT EXISTS tb_estado_semaforo(
 cod_est_semaforo int(1) NOT NULL,
@@ -29,8 +27,8 @@ INSERT INTO tb_estado_semaforo VALUES(1,'TERMINADO');
 
 CREATE TABLE IF NOT EXISTS tb_semaforo(
 cod_semaforo int(2) NOT NULL,
-semaforo			varchar(30) NOT NULL,
-cod_est_semaforo 		int(1) NOT NULL,
+semaforo      varchar(30) NOT NULL,
+cod_est_semaforo    int(1) NOT NULL,
 rango_dias varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -38,7 +36,7 @@ ALTER TABLE tb_semaforo
   ADD PRIMARY KEY (cod_semaforo);
 
 ALTER TABLE tb_semaforo
-	ADD FOREIGN KEY(cod_est_semaforo) REFERENCES tb_estado_semaforo(cod_est_semaforo);
+  ADD FOREIGN KEY(cod_est_semaforo) REFERENCES tb_estado_semaforo(cod_est_semaforo);
 
 INSERT INTO tb_semaforo VALUES(1,'VERDE',1,'0 DIAS');
 INSERT INTO tb_semaforo VALUES(2,'AMARILLO',0,'ENTRE 5 Y 10 DIAS');
@@ -65,36 +63,36 @@ INSERT INTO tb_politicas VALUES(9,'RECEPCION DE ENTREGAS');
 INSERT INTO tb_politicas VALUES(10,'GUIAS DE DEVOLUCION');
 
 CREATE TABLE IF NOT EXISTS tb_tipo_persona(
-cod_tipo_persona	int(2) NOT NULL,
-descripcion	varchar(50)	NOT NULL
+cod_tipo_persona  int(2) NOT NULL,
+descripcion varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ALTER TABLE tb_tipo_persona
-	ADD PRIMARY KEY(cod_tipo_persona);
+  ADD PRIMARY KEY(cod_tipo_persona);
 
 INSERT INTO tb_tipo_persona VALUES(1,'ADMINISTRADOR');
 INSERT INTO tb_tipo_persona VALUES(2,'SUBGERENTE ZONAL');
 INSERT INTO tb_tipo_persona VALUES(3,'JEFE ZONAL');
 
 CREATE TABLE IF NOT EXISTS tb_estado(
-cod_estado	int(1) NOT NULL,
-descripcion	varchar(50)	NOT NULL
+cod_estado  int(1) NOT NULL,
+descripcion varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ALTER TABLE tb_estado
-	ADD PRIMARY KEY(cod_estado);
+  ADD PRIMARY KEY(cod_estado);
 
 INSERT INTO tb_estado VALUES(0,'INACTIVO');
 INSERT INTO tb_estado VALUES(1,'ACTIVO');
 
 CREATE TABLE IF NOT EXISTS tb_persona(
-dni					varchar(8) NOT NULL,
+dni         varchar(8) NOT NULL,
 cod_tipo_persona int(2) NOT NULL,
-nombre			varchar(50) NOT NULL,
-paterno			varchar(50) NOT NULL,
-materno		  varchar(50) NOT NULL,
-cod_estado			int(1) NOT NULL,
-fecha_reg		datetime
+nombre      varchar(50) NOT NULL,
+paterno     varchar(50) NOT NULL,
+materno     varchar(50) NOT NULL,
+cod_estado      int(1) NOT NULL,
+fecha_reg   datetime
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ALTER TABLE tb_persona
@@ -120,7 +118,7 @@ CREATE TABLE IF NOT EXISTS usuarios(
   token varchar(40) NOT NULL,
   token_password varchar(100) DEFAULT NULL,
   password_request int(11) DEFAULT '0',
-	dni varchar(8) NOT NULL
+  dni varchar(8) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ALTER TABLE usuarios
@@ -137,7 +135,7 @@ INSERT INTO usuarios(usuario,password,correo,activacion,token,token_password,pas
 
 CREATE TABLE IF NOT EXISTS tb_cab_documentos(
 cod_doc varchar(7) NOT NULL,
-num_doc_ori	varchar(15) NOT NULL,-- numero documento origen
+num_doc_ori varchar(15) NOT NULL,-- numero documento origen
 loc_ori varchar(5),
 loc_dest varchar(5),
 total_prod int(3), 
@@ -154,16 +152,16 @@ ALTER TABLE tb_cab_documentos
   ADD PRIMARY KEY (cod_doc);
 
 ALTER TABLE tb_cab_documentos 
-	ADD FOREIGN KEY(loc_ori) REFERENCES tb_locales(cod_local);
+  ADD FOREIGN KEY(loc_ori) REFERENCES tb_locales(cod_local);
 
 ALTER TABLE tb_cab_documentos 
-	ADD FOREIGN KEY(loc_dest) REFERENCES tb_locales(cod_local);
+  ADD FOREIGN KEY(loc_dest) REFERENCES tb_locales(cod_local);
 
 ALTER TABLE tb_cab_documentos 
-	ADD FOREIGN KEY(jzona_ori) REFERENCES tb_persona(dni);
+  ADD FOREIGN KEY(jzona_ori) REFERENCES tb_persona(dni);
 
 ALTER TABLE tb_cab_documentos 
-	ADD FOREIGN KEY(jzona_dest) REFERENCES tb_persona(dni);
+  ADD FOREIGN KEY(jzona_dest) REFERENCES tb_persona(dni);
 
 CREATE TABLE IF NOT EXISTS tb_det_documentos(
 cod_det_doc int(10) NOT NULL,
@@ -182,13 +180,13 @@ ALTER TABLE tb_det_documentos
   MODIFY cod_det_doc int(10) NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE tb_det_documentos 
-	ADD FOREIGN KEY(cod_doc) REFERENCES tb_cab_documentos(cod_doc);
+  ADD FOREIGN KEY(cod_doc) REFERENCES tb_cab_documentos(cod_doc);
 
 CREATE TABLE IF NOT EXISTS tb_estado_documentos(
-cod_estado_doc 			INT(7) NOT NULL,
-cod_politicas 			int(2) NOT NULL,
-cod_doc 	varchar(7) NOT NULL,
-cod_semaforo 				int(2) NOT NULL
+cod_estado_doc      INT(7) NOT NULL,
+cod_politicas       int(2) NOT NULL,
+cod_doc   varchar(7) NOT NULL,
+cod_semaforo        int(2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ALTER TABLE tb_estado_documentos
@@ -198,13 +196,13 @@ ALTER TABLE tb_estado_documentos
   MODIFY cod_estado_doc int(7) NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE tb_estado_documentos
-	ADD FOREIGN KEY(cod_politicas) REFERENCES tb_politicas(cod_politicas);
+  ADD FOREIGN KEY(cod_politicas) REFERENCES tb_politicas(cod_politicas);
 
 ALTER TABLE tb_estado_documentos
-	ADD FOREIGN KEY(cod_doc) REFERENCES tb_cab_documentos(cod_doc);
+  ADD FOREIGN KEY(cod_doc) REFERENCES tb_cab_documentos(cod_doc);
 
 ALTER TABLE tb_estado_documentos
-	ADD FOREIGN KEY(cod_semaforo) REFERENCES tb_semaforo(cod_semaforo);
+  ADD FOREIGN KEY(cod_semaforo) REFERENCES tb_semaforo(cod_semaforo);
 
 INSERT INTO tb_cab_documentos VALUES('0000002','3330009989','C58','C54',16,'2018-05-14','40601632','40601632','dflores','dflores','dflores','dflores');
 INSERT INTO tb_cab_documentos VALUES('0000003','3330009990','C58','C54',16,'2018-05-14','40601632','40601632','dflores','dflores','dflores','dflores');

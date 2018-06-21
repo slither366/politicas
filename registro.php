@@ -37,6 +37,7 @@ include 'funcs/funcs.php';
 	if(isNull($nombre,$paterno,$materno/*,$usuario,$password,$con_password,$email*/)){
 		$errors[] = "Debe llenar todos los campos";
 	}
+	
 	if(!isEmail($email)){
 		$errors[] = "Dirección de correo inválida";
 	}
