@@ -4,25 +4,9 @@ require '../funcs/conexion.php';
 include '../funcs/funcs.php';
 
 $mailDest = $_POST['correo_dest'];
-//$corOri = $_POST('correo_ori');
-//$corDest = $_POST('correo_dest');
-//echo $corDest;
-//Make sure that the session variable actually exists!
-/*if(isset($_SESSION['guiasTransPend'])){
-    //Loop through it like any other array.
-	$arrayGuias = $_SESSION['guiasTransPend'];
-}*/
 
 $GLOBALS['titCorreo'] = "Estimados por favor cerrar sus Guias de Transferencias Pendientes";
 $GLOBALS['desCorreo'] = "Actualmente se cuenta con un buen numero de Guias de Transferencias Pendientes en sus locales. Si necesitan algún apoyo por favor no duden en contactarme.";
-
-//$resultado = $_POST['origen'] + $_POST['destino'] + $_POST['jefeDestino'];
-
-//$ori = $_POST['origen'];
-//$dest = $_POST['destino'];
-//$dniDest = $_POST['jefeDestino'];
-//$oriDesc = mb_convert_case($_POST['oriDesc'], MB_CASE_TITLE, "UTF-8");//Transformo el texto a Mayusculas
-//$destDesc = mb_convert_case($_POST['destDesc'], MB_CASE_TITLE, "UTF-8");//Transformo el texto a Mayusculas
 ?>
 
 <html>
@@ -55,6 +39,22 @@ $GLOBALS['desCorreo'] = "Actualmente se cuenta con un buen numero de Guias de Tr
 		background: orange;*/
 	}
 </style>
+
+<script type="text/javascript">
+	/*$(document).ready(function(){
+		$('#btnEnviar').click(function(){
+			alert("press Click");
+			var vTitulo = $("#titulo").val();
+			var ajaxurl = 'enviarMail.php',
+			data =  {'action': vTitulo};
+			$.post(ajaxurl, data, function (response) {
+            // Response div goes here.
+            alert("action performed successfully");
+        });
+		});
+	});*/
+</script>
+
 <!-- Bootstrap CSS -->
 <link rel="stylesheet" type="text/css" href="../bootstrap/css/bootstrap.css">
 </head>
@@ -74,46 +74,45 @@ $GLOBALS['desCorreo'] = "Actualmente se cuenta con un buen numero de Guias de Tr
 
 					<div class="card-body">
 						<div style="display:none" id="login-alert" class="alert alert-danger col-sm-12"></div>
-						<form id="signupform" class="form-horizontal" role="form" action="<?php $_SERVER['PHP_SELF'] ?>" method="POST" autocomplete="off">
 
-							<div id="signupalert" style="display:none" class="alert alert-danger">
-								<p>Error:</p>
-								<span></span>
-							</div>
+						<!--<form id="signupform" class="form-horizontal" role="form" action="<?php $_SERVER['PHP_SELF'] ?>" method="POST" autocomplete="off">-->
+							<form method="post" target="_blank" id="FormularioExportacion">
+								<div id="signupalert" style="display:none" class="alert alert-danger">
+									<p>Error:</p>
+									<span></span>
+								</div>
 
-							<div class="form-group">
-								<label for="titulo">Titulo:</label>
-								<input type="text" class="form-control" name="titulo" placeholder="Escribe el Titulo de Tu correo" value=<?php echo "'".$titCorreo."'" ?> 
-								required>
+								<div class="form-group">
+									<label for="titulo">Titulo:</label>
+									<input type="text" class="form-control" name="titulo" placeholder="Escribe el Titulo de Tu correo" id="titulo" value=<?php echo "'".$titCorreo."'" ?> 
+									required>
+								</div>
 
-							</div>
+								<div class="form-group">
+									<label for="emails">Para:</label>
+									<input type="text" class="form-control" name="emails" placeholder="Ingresar los Correos Destinos" id="emails" value=<?php echo "'".$mailDest."'" ?>
+									required>
+								</div>							
 
-							<div class="form-group">
-								<label for="emails">Para:</label>
-								<input type="text" class="form-control" name="emails" placeholder="Ingresar los Correos Destinos" value=<?php echo "'".$mailDest."'" ?> 
-								required>
+								<div class="form-group">
+									<label for="detCorreo">Descripcion:</label>
+									<textarea class="form-control" name="detCorreo" rows="6" id="detCorreo"><?php echo $desCorreo ?></textarea>
+								</div>
 
-							</div>							
-
-							<div class="form-group">
-								<label for="detalle">Descripcion:</label>
-								<textarea class="form-control" name="detalle" rows="6"><?php echo $desCorreo ?></textarea>
-							</div>
-
-							<div class="form-group d-flex justify-content-center">                      
-								<button id="btn-signup" type="submit" class="btn btn-success">Enviar</button>
-							</div>
-						</form>
+								<div class="form-group d-flex justify-content-center">                      
+									<button id="btn-signup" type="submit" class="btn btn-success" id="btnEnviar" onclick="enviarCorreo();return false;">Enviar</button>
+								</div>
+							</form>
+						</div>
 					</div>
+
 				</div>
-				
+
+				<div class="div col-xl-3 col-lg-3 col-md-2" id="col1"></div>
+
 			</div>
-
-			<div class="div col-xl-3 col-lg-3 col-md-2" id="col1"></div>
-
 		</div>
-	</div>
 
-	<script src="../bootstrap/js/bootstrap.js"></script>				
-</body>
-</html>
+		<script src="../bootstrap/js/bootstrap.js"></script>				
+	</body>
+	</html>

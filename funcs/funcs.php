@@ -279,8 +279,8 @@ function registraPersona($dni,$cod_tipo_persona,$nombre,$paterno,$materno){
 		
 		$mail->setFrom('dfloreslearner@gmail.com','Dr. David Flores');//Nombre del Usuario que Envía
 
-		foreach ($arrayLocales as list($email, $nombre)) {
-			$mail->addAddress($email, $nombre);//Correo y Usuario al que se envía
+		foreach ($arrayLocales as $email) {/*list($email, $nombre*/
+			$mail->addAddress($email, '');//Correo y Usuario al que se envía
 		}
 
 		$mail->Subject = $asunto;//asunto del correo

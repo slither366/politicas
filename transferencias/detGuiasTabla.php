@@ -48,11 +48,63 @@ $destDesc = mb_convert_case($_POST['destDesc'], MB_CASE_TITLE, "UTF-8");//Transf
 		border: solid 0px;
 		border-color: black;
 	}
+/*
+	.contTitulo{
+		border: solid 1px;
+		border-color: black;
+	}
+
+	#titInterno{
+		border: solid 1px;
+		border-color: black;
+	}
+	*/
+	/* Por debajo de 400px */
+	@media (min-width: 100px) and (max-width: 400px){
+
+		.TextTable{
+			font-size:12px;	
+		}
+
+		#titLocal{
+			font-size:13px;
+			font-weight: bold;
+
+		}
+	}
+
+	/* Por encima de 400px */
+	@media (min-width: 401px) and (max-width: 600px){
+
+		.TextTable{
+			font-size:12px;	
+		}
+
+		#titLocal{
+			font-size:16px;
+			font-weight: bold;
+		}		
+	}
+
+	@media (min-width: 601px) and (max-width: 1800px){
+
+		#titLocal{
+			font-size:24px;
+			font-weight: bold;
+		}		
+	}
+
+	#pollo{
+		margin-left: 0px;
+		margin-right: 0px;
+		border: solid 1px;
+		border-color: black;
+	}
 
 </style>
 
 <script type="text/javascript">
-	
+
 	$(window).ready(function(){
 		$("#btnDescargar").click(function(event) {
 			$("#datos_a_enviar").val( 
@@ -73,18 +125,20 @@ $destDesc = mb_convert_case($_POST['destDesc'], MB_CASE_TITLE, "UTF-8");//Transf
 	$datos = getGuiasTransProDet($ori,$dest,$dniDest);
 	?>
 
-	<div class="pl-4 mt-4 pt-0 ml-5">
-		<h1 class="text-left Titulo" id="titLocal"><small>Detalle de:</br><strong><?php echo $ori.'-'.$oriDesc.' AL <br/>'.$dest.'-'.$destDesc ?></strong></small></h1>
-	</div>				
+	<div class="container mt-4">
+		<div class="row justify-content-center">
+			<div class="div col-xl-9 col-lg-8 col-md-8 col-md-10 col-12" id="titLocal">
+			Detalle de:</br>
+			<strong><?php echo $ori.'-'.$oriDesc.' al '.$dest.'-'.$destDesc ?></strong>
+		</div>			
+	</div>
 
-	<div class="container" id="cont1">
-		<div class="row">
 
-			<div class="div col-xl-2 col-lg-3 col-md-2" id="col1"></div>
+	<div class="container mt-2" id="pollo">
+		<div class="row justify-content-center">
+			<div class="div col-xl-9 col-lg-8 col-md-8 col-md-10 col-12">
 
-			<div class="div col-xl-8 col-lg-6 col-md-8 col-12" id="col1">
-
-				<div class="table-responsive">      
+				<div class="table-responsive">
 					<table class="table table-hover TextTable table-sm" id="tablaDetalle">
 						<thead class="thead-dark">
 							<tr>
@@ -118,15 +172,12 @@ $destDesc = mb_convert_case($_POST['destDesc'], MB_CASE_TITLE, "UTF-8");//Transf
 				</div>
 
 			</div>
-
-			<div class="div col-xl-2 col-lg-3 col-md-2" id="col1"></div>
-
 		</div>
 	</div>
 
 
 	<!--<img src="export_to_excel.gif" class="botonExcel" />-->
-	<div class="container" id="cont2">
+	<div class="container mt-4">
 		<div class="row justify-content-center">
 
 			<div class="div col-xl-3 col-lg-3 col-md-4 col-sm-5 col-7 align-self-center" id="col2">
