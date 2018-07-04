@@ -97,8 +97,8 @@ $destDesc = mb_convert_case($_POST['destDesc'], MB_CASE_TITLE, "UTF-8");//Transf
 	#pollo{
 		margin-left: 0px;
 		margin-right: 0px;
-		border: solid 1px;
-		border-color: black;
+		/*border: solid 1px;
+		border-color: black;*/
 	}
 
 </style>
@@ -122,7 +122,7 @@ $destDesc = mb_convert_case($_POST['destDesc'], MB_CASE_TITLE, "UTF-8");//Transf
 
 <body>
 	<?php
-	$datos = getGuiasTransProDet($ori,$dest,$dniDest);
+	$datosTransPendDet = getGuiasTransProDet($ori,$dest,$dniDest);
 	?>
 
 	<div class="container mt-4">
@@ -149,10 +149,10 @@ $destDesc = mb_convert_case($_POST['destDesc'], MB_CASE_TITLE, "UTF-8");//Transf
 							</tr>
 						</thead>
 
-						<tbody>
+						<tbody id="bodyTabla">
 							<?php
-							if ($datos){
-								foreach($datos as $dato) {
+							if ($datosTransPendDet){
+								foreach($datosTransPendDet as $dato) {
 									?>
 									<tr>
 										<th scope="row" class="text-center"><?php echo $dato["num"];?></th>

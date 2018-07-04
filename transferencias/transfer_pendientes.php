@@ -11,19 +11,19 @@ include '../funcs/funcs.php';
 	?>
 
 	<?php
-	$datos = getGuiasTransPreDet(1,$_SESSION['dni']);
-	$_SESSION['guiasTransPend'] = $datos;
+	$datosTransPendDet = getGuiasTransPreDet(1,$_SESSION['dni']);
+	//$_SESSION['guiasTransPend'] = $datosTransPendDet;
 
 	$totalGuias = 0;
 	$totCantLoc = 0;
 
-	if($datos > 0){
-		foreach($datos as $dato) {
+	if($datosTransPendDet > 0){
+		foreach($datosTransPendDet as $dato) {
 			$totalGuias = $totalGuias + $dato["tot"];
 			$totCantLoc = $totCantLoc + 1;
 		}
 	}
-	?>	
+?>
 	<html>
 	<head>
 		<title>Transferencias Pendientes</title>
@@ -54,13 +54,17 @@ include '../funcs/funcs.php';
 		
 		#jbtDetalle{
 			background-color: #E9ECEF;
-			border: solid 1px;
-			border-color: black;
+			/*border: solid 1px;
+			border-color: black;*/
 		}
 
 		.table-responsive{
 			overflow:scroll;
 			height:200px;	
+		}
+
+		#bodyTabla{
+			/*overflow:scroll;*/
 		}
 
 		#btnDescargar{
@@ -358,8 +362,8 @@ include '../funcs/funcs.php';
 
 					<div class="row">
 						<?php
-						if ($datos){ 
-							foreach($datos as $dato) {
+						if ($datosTransPendDet){ 
+							foreach($datosTransPendDet as $dato) {
 								?>
 								<div class="col-sm-6 col-md-4 col-lg-4 mt-3 pt-0">
 									<div class="card">
