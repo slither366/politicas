@@ -14,11 +14,25 @@ $datosDepoTardeDet= getDepPendTardeDet("2",$dniDest);
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<style>
-
+			/*#pruebita1{
+			border: solid 1px;
+			border-color: black;*/
 </style>
 
 <script type="text/javascript">
+	function ocultarDetalleTabla(codLocal){
+		$("#tbodyDetalle tr").hide();
+		$("#tbodyDetalle tr:contains("+codLocal+")").show();                
+	}
 
+	function mostrarTodosTabla(){
+		$("#tbodyDetalle tr").show();         
+	}
+
+	function filtrarSemaforo(textFiltro){
+		$("#tbodyDetalle tr").hide();
+		$("#tbodyDetalle tr:contains("+textFiltro+")").show(); 
+	}
 </script>
 <!-- Bootstrap CSS -->
 <link rel="stylesheet" type="text/css" href="../bootstrap/css/bootstrap.css">
@@ -26,9 +40,9 @@ $datosDepoTardeDet= getDepPendTardeDet("2",$dniDest);
 
 <body>
 	<section class="container" id="pruebita1">
-		<div class="row mt-4"> <!-- Inicia el margen desde el Top-->
+		<div class="row mt-4"> <!-- Inicia el margen desde el Top -->
 			<div class="col-12 pl-0 pr-0 d-flex flex-row justify-content-between" id="pruebita1">
-				<div class="card col-5 pl-0 pr-0" style="border-radius: unset;border: solid 1px;border-color: #3C8DBC;">
+				<div class="card col-xl-5 col-lg-5 col-md-6 pl-0 pr-0" style="border-radius: unset;border: solid 1px;border-color: #3C8DBC;">
 					<div class="card-header pt-2" style="border-radius: unset;text-align: left;background-color: #3C8DBC;max-height: 3rem; color: white;">LEYENDA DE SEMAFOROS
 					</div>
 					<div class="card-body pt-2 pb-2" style="background: #E9ECEF;font-size: 14px">
@@ -37,13 +51,13 @@ $datosDepoTardeDet= getDepPendTardeDet("2",$dniDest);
 								<span>- Locales depositar hasta la 13:00 del siguiente día al Cierre día.</span>
 							</div>
 							<div class="col-4" style="text-align: center;">
-								<span class="badge badge-info" style="font-size: 15px">Menor 1 día</span>
+								<span class="badge badge-info" style="font-size: 15px; cursor:pointer;color: white;" onclick="filtrarSemaforo('Menor 1')">Menor 1 día</span>
 							</div>
 							<div class="col-4" style="text-align: center;">
-								<span class="badge badge-warning" style="font-size: 15px">Mayor 1 día</span>
+								<span class="badge badge-warning" style="font-size: 15px; cursor:pointer;color: white;" onclick="filtrarSemaforo('Mayor 1')">Mayor 1 día</span>
 							</div>
 							<div class="col-4" style="text-align: center;">
-								<span class="badge badge-danger" style="font-size: 15px; text-align: center;">Mayor 2 días</span>
+								<span class="badge badge-danger" style="font-size: 15px; text-align: center; cursor:pointer;color: white;" onclick="filtrarSemaforo('Mayor 2')">Mayor 2 días</span>
 							</div>
 							<div class="col-4" style="text-align: center;">
 								<span style="font-size: 12px">Mayor a las 13:00 pm.</span>
@@ -57,12 +71,12 @@ $datosDepoTardeDet= getDepPendTardeDet("2",$dniDest);
 						</div>
 					</div>
 				</div>
-				<div class="card col-6 pl-0 pr-0" style="border-radius: unset;border: solid 1px;border-color: #3C8DBC;">
+				<div class="card col-xl-6 col-lg-6 col-md-6 pl-0 pr-0" style="border-radius: unset;border: solid 1px;border-color: #3C8DBC;">
 					<div class="card-header pt-2" style="border-radius: unset;text-align: left;background-color: #3C8DBC;max-height: 3rem; color: white;">FILTRO LOCALES DETALLE</div>
 					<div class="card-body pt-2 pb-2" style="background: #E9ECEF;font-size: 14px">
 						<div class="row">
 							<div class="col-2" style="text-align: center;">
-								<a href="#" class="badge badge-secondary" style="font-size: 15px">Todos</a>
+								<a class="badge badge-secondary" style="font-size: 15px; cursor:pointer;color: white;" onclick="mostrarTodosTabla()">Todos</a>
 							</div>
 							<?php
 							if ($datosLocalesDepTarde){
@@ -70,7 +84,7 @@ $datosDepoTardeDet= getDepPendTardeDet("2",$dniDest);
 									?>
 
 									<div class="col-2 pb-1" style="text-align: center;">
-										<a href="#" class="badge badge-success" style="font-size: 15px"><?php echo $dato["locales"];?></a>
+										<a class="badge badge-success" style="font-size: 15px; cursor:pointer;color: white;" onclick="ocultarDetalleTabla(<?php echo "'".$dato["locales"]."'";?>)"><?php echo $dato["locales"];?></a>
 									</div>
 
 									<?php
@@ -108,7 +122,7 @@ $datosDepoTardeDet= getDepPendTardeDet("2",$dniDest);
 										<th scope="col">Semaforo</th>
 									</tr>
 								</thead>
-								<tbody>
+								<tbody id="tbodyDetalle">
 									<?php
 									if ($datosDepoTardeDet){
 										foreach($datosDepoTardeDet as $dato) {

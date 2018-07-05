@@ -18,7 +18,19 @@ $locDepPendDetalle= getLocDepoPendDet("2",$dniDest);
 </style>
 
 <script type="text/javascript">
+	function ocultarDetalleTabla(codLocal){
+		$("#tbodyDetalle tr").hide();
+		$("#tbodyDetalle tr:contains("+codLocal+")").show();                
+	}
 
+	function mostrarTodosTabla(){
+		$("#tbodyDetalle tr").show();         
+	}
+
+	function filtrarSemaforo(textFiltro){
+		$("#tbodyDetalle tr").hide();
+		$("#tbodyDetalle tr:contains("+textFiltro+")").show(); 
+	}
 </script>
 <!-- Bootstrap CSS -->
 <link rel="stylesheet" type="text/css" href="../bootstrap/css/bootstrap.css">
@@ -37,13 +49,13 @@ $locDepPendDetalle= getLocDepoPendDet("2",$dniDest);
 								<span>- Locales depositar hasta la 13:00 del siguiente día al Cierre día.</span>
 							</div>
 							<div class="col-4" style="text-align: center;">
-								<span class="badge badge-info" style="font-size: 15px">Menor 1 día</span>
+								<span class="badge badge-info" style="font-size: 15px;cursor:pointer;color: white;" onclick="filtrarSemaforo('Menor 1')">Menor 1 día</span>
 							</div>
 							<div class="col-4" style="text-align: center;">
-								<span class="badge badge-warning" style="font-size: 15px">Mayor 1 día</span>
+								<span class="badge badge-warning" style="font-size: 15px;cursor:pointer;color: white;" onclick="filtrarSemaforo('Mayor 1')">Mayor 1 día</span>
 							</div>
 							<div class="col-4" style="text-align: center;">
-								<span class="badge badge-danger" style="font-size: 15px; text-align: center;">Mayor 2 días</span>
+								<span class="badge badge-danger" style="font-size: 15px; text-align: center;cursor:pointer;color: white;" onclick="filtrarSemaforo('Mayor 2')">Mayor 2 días</span>
 							</div>
 							<div class="col-4" style="text-align: center;">
 								<span style="font-size: 12px">Mayor a las 13:00 pm.</span>
@@ -62,7 +74,7 @@ $locDepPendDetalle= getLocDepoPendDet("2",$dniDest);
 					<div class="card-body pt-2 pb-2" style="background: #E9ECEF;font-size: 14px">
 						<div class="row">
 							<div class="col-2" style="text-align: center;">
-								<a href="#" class="badge badge-secondary" style="font-size: 15px">Todos</a>
+								<a class="badge badge-secondary" style="font-size: 15px;cursor:pointer;color: white;" onclick="mostrarTodosTabla()">Todos</a>
 							</div>
 							<?php
 							if ($locDepPendiente){
@@ -70,7 +82,7 @@ $locDepPendDetalle= getLocDepoPendDet("2",$dniDest);
 									?>
 
 									<div class="col-2 pb-1" style="text-align: center;">
-										<a href="#" class="badge badge-success" style="font-size: 15px"><?php echo $dato["locales"];?></a>
+										<a class="badge badge-success" style="font-size: 15px;cursor:pointer;color: white;" onclick="ocultarDetalleTabla(<?php echo "'".$dato["locales"]."'";?>)"><?php echo $dato["locales"];?></a>
 									</div>
 
 									<?php
@@ -105,7 +117,7 @@ $locDepPendDetalle= getLocDepoPendDet("2",$dniDest);
 										<th scope="col" style="text-align: center;">Semaforo</th>
 									</tr>
 								</thead>
-								<tbody>
+								<tbody id="tbodyDetalle">
 									<?php
 									if ($locDepPendDetalle){
 										foreach($locDepPendDetalle as $dato) {

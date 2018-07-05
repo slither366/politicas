@@ -21,33 +21,39 @@ include '../funcs/funcs.php';
 		<link href="/static/fontawesome/fontawesome-all.css" rel="stylesheet">
 
 		<style>
-		body {
+		/*body {
 			padding-top: 0px;
 			padding-bottom: 20px;
 			background-color: #E9ECEF;
-		}
+			}*/
+			#bodyTransfer {
+				padding-top: 0px;
+				padding-bottom: 0px;
+				margin-bottom: 0px;
+				background-color: #E9ECEF;
+			}
 
-		#btnH5{
-			font-weight: bold;
-			font-size: 16px;
-			width: 200px;
-		}
+			#btnH5{
+				font-weight: bold;
+				font-size: 16px;
+				width: 200px;
+			}
 
-		#titH5{
-			text-align: center;
-			font-weight: bold;
-			font-size: 18px;
-		}
+			#titH5{
+				text-align: center;
+				font-weight: bold;
+				font-size: 18px;
+			}
 
-		.card-title{
-			text-align: center;
-		}
+			.card-title{
+				text-align: center;
+			}
 
-		#titCardTrans{
-			text-align: center;
-		}
+			#titCardTrans{
+				text-align: center;
+			}
 
-		#pruebita1{
+			#pruebita1{
 			/*border: solid 1px;
 			border-color: black;*/
 		}
@@ -87,7 +93,7 @@ include '../funcs/funcs.php';
 					$("#section2").html(response);
 				}
 			});
-		}				
+		}
 	</script>
 </head>
 
