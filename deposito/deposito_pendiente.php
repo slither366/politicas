@@ -21,41 +21,93 @@ include '../funcs/funcs.php';
 		<link href="/static/fontawesome/fontawesome-all.css" rel="stylesheet">
 
 		<style>
-		/*body {
-			padding-top: 0px;
-			padding-bottom: 20px;
-			background-color: #E9ECEF;
-			}*/
-			#bodyTransfer {
-				padding-top: 0px;
-				padding-bottom: 0px;
-				margin-bottom: 0px;
-				background-color: #E9ECEF;
-			}
 
+		#bodyTransfer {
+			padding-top: 0px;
+			padding-bottom: 0px;
+			margin-bottom: 0px;
+			background-color: #E9ECEF;
+		}
+
+		#btnH5{
+			font-weight: bold;
+			font-size: 16px;
+		}
+
+		#titH5{
+			text-align: center;
+			font-weight: bold;
+			font-size: 18px;
+		}
+
+		.card-title{
+			text-align: center;
+		}
+
+		#titCardTrans{
+			text-align: center;
+		}
+
+		#pruebita1{
+			border: solid 1px;
+			border-color: black;
+		}
+
+		.linkCorreo {
+			position: fixed;
+			bottom: 200px;
+			color: white;
+			z-index: 1;
+			cursor: pointer;
+			/*border:1px solid black;*/
+		}
+
+		@media (min-width: 100px) and (max-width: 768px){
 			#btnH5{
-				font-weight: bold;
-				font-size: 16px;
-				width: 200px;
+				width: 140px;
+				
 			}
 
 			#titH5{
-				text-align: center;
+				font-size: 13px;
+			}
+
+			#titulo1{
+				font-size: 20px;
 				font-weight: bold;
-				font-size: 18px;
-			}
-
-			.card-title{
 				text-align: center;
 			}
+		}
 
-			#titCardTrans{
+		@media (min-width: 768px) and (max-width: 2000px){
+			#btnH5{
+				width: 200px;
+			}
+			#titulo1{
+				font-size: 25px;
+				font-weight: bold;
 				text-align: center;
 			}
+		}
 
-			#pruebita1{
-			/*border: solid 1px;
-			border-color: black;*/
+		@media (min-width: 100px) and (max-width: 400px){
+			#imgCorreo{
+				width: 100%;
+			}
+
+			.linkCorreo {
+				right: 0px;
+			}
+		}
+
+		@media (min-width: 400px) and (max-width: 1800px){
+			#imgCorreo{
+				width: 150%;
+			}
+
+			.linkCorreo {
+				right: 18px;
+			}
 		}
 
 	</style>
@@ -93,11 +145,36 @@ include '../funcs/funcs.php';
 					$("#section2").html(response);
 				}
 			});
+		}	
+
+		function mostrarEnvioCorreo(mailDest){
+			var parametros = {
+				"correo_dest" : mailDest
+			};
+			$.ajax({
+				data:  parametros,
+				url:   '../formEnviarCorreo.php',
+				type:  'post',
+				beforeSend: function () {
+					$("#wait_2").html("Procesando, espere por favor Procesando...");
+				},
+				success:  function (response) {
+					$("#frmCorreo").html(response);
+				}
+			});
 		}
+
 	</script>
 </head>
 
 <body id="bodyTransfer">
+
+	<div class="linkCorreo">
+		<div >
+			<a onclick="mostrarEnvioCorreo('dflores@mifarma.com.pe');return false;"><img src= "mail.svg" id="imgCorreo"></a>
+		</div>
+	</div>
+
 	<nav class="navbar navbar-expand-sm navbar-expand-md navbar-expand-lg navbar-dark bg-primary sticky-top">
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
@@ -122,17 +199,16 @@ include '../funcs/funcs.php';
 		</div>
 	</nav>
 
-	<section class="container">
-		<div class="pl-4 mt-4 pt-0">
-			<h1 class="text-center Titulo">Deposito Bancario Pendiente</h1>
+	<section class="container" id="pruebita1">
+		<div class="mt-0 pt-4 pb-4 mb-0" id="pruebita1">
+			<div id="titulo1">DEPOSITO BANCARIO PENDIENTE</div>
 		</div>
-		<div class="row mt-4 justify-content-center" id="pruebita1"> <!-- Inicia el margen desde el Top-->
-
-			<div class=" col-xl-4 col-sm-6 col-md-4 col-lg-4 mt-3">
-				<div class="card text-white bg-info mb-3" style="max-width: 18rem;">
+		<div class="row mt-0 pt-0 mb-0 justify-content-center" id="pruebita1"> <!-- Inicia el margen desde el Top-->
+			<div class="col-xl-4 col-lg-4 col-md-5 col-sm-5 col-10 pb-4" id="pruebita1">
+				<div class="card text-white bg-info" id="pruebita1">
 					<div class="card-header" id="titH5">DEPOSITO PENDIENTE</div>
 					<div class="card-body">
-						<div id="titCardTrans">
+						<div id="titCardTrans" id="pruebita1">
 							<h1><span class="badge badge-light"><?php echo getCountLocDepPend(2,$_SESSION['dni']);?></span></h1>
 						</div>
 						<div style="text-align: center" id="pruebita1">
@@ -141,9 +217,10 @@ include '../funcs/funcs.php';
 					</div>
 				</div>
 			</div>
-
-			<div class=" col-xl-4 col-sm-6 col-md-4 col-lg-4 mt-3">
-				<div class="card text-white bg-info mb-3" style="max-width: 18rem;">
+			<div class="col-xl-2 col-lg-2 col-md-2 col-sm-1 pb-0" id="pruebita1">
+			</div>
+			<div class="col-xl-4 col-lg-4 col-md-5 col-sm-5 col-10 pb-4" id="pruebita1">
+				<div class="card text-white bg-info" >
 					<div class="card-header" id="titH5">DEPOSITADO TARDE</div>
 					<div class="card-body">
 						<div id="titCardTrans" id="pruebita1">
@@ -159,6 +236,8 @@ include '../funcs/funcs.php';
 	</section>
 
 	<section class="container2" id="section2"></section>
+
+	<section class="container3" id="frmCorreo"></section>
 
 	<!--mt-0 mb-0 col-sm-6 col-md-4 col-lg-4-->
 	<!-- Optional JavaScript -->

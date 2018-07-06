@@ -6,6 +6,7 @@ include '../funcs/funcs.php';
 $dniDest = $_POST['jefeDestino'];
 $locDepPendiente= getLocDepPend("2",$dniDest);
 $locDepPendDetalle= getLocDepoPendDet("2",$dniDest);
+$datosTotalDepPend= getTotalizadoDepPend("2",$dniDest)
 ?>
 
 <html>
@@ -13,7 +14,45 @@ $locDepPendDetalle= getLocDepoPendDet("2",$dniDest);
 	<title>Transferencias Pendientes</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
 	<style>
+	@media (min-width: 100px) and (max-width: 450px){
+		#miniBtn{
+			/*background-image: url("mail2.png");*/
+			font-size:13px;
+		}
+
+		#miniText{
+			font-size:10px;
+		}
+	}
+
+	@media (min-width: 450px) and (max-width: 2000px){
+		#miniBtn{
+			/*background-image: url("mail2.png");*/
+			font-size:15px;
+		}
+	}
+
+	@media (min-width: 100px) and (max-width: 992px){
+		#fontTrTabla{
+			/*background-image: url("mail2.png");*/
+			font-size:10px;
+		}
+		#tblSemaforo{
+			font-size:12px;	
+		}
+	}
+
+	@media (min-width: 992px) and (max-width: 2000px){
+		#fontTrTabla{
+			/*background-image: url("mail2.png");*/
+			font-size:13px;
+		}
+		#tblSemaforo{
+			font-size:13px;	
+		}
+	}
 
 </style>
 
@@ -39,50 +78,53 @@ $locDepPendDetalle= getLocDepoPendDet("2",$dniDest);
 <body>
 
 	<section class="container" id="pruebita1">
-		<div class="row mt-4"> <!-- Inicia el margen desde el Top-->
-			<div class="col-12 pl-0 pr-0 d-flex flex-row justify-content-between" id="pruebita1">
-				<div class="card col-5 pl-0 pr-0" style="border-radius: unset;border: solid 1px;border-color: #3C8DBC;">
-					<div class="card-header pt-2" style="border-radius: unset;text-align: left;background-color: #3C8DBC;max-height: 3rem; color: white;">LEYENDA DE SEMAFOROS</div>
-					<div class="card-body pt-2 pb-2" style="background: #E9ECEF;font-size: 14px">
+		<div class="row justify-content-between"> <!-- Inicia el margen desde el Top -->
+			<div class="col-xl-5 col-lg-5 col-md-8 col-sm-12 col-12 pl-0 pr-0 pb-4" id="pruebita1">
+				<div class="card" style="border-radius: unset;border: solid 1px;border-color: #3C8DBC;">
+					<div class="card-header" style="border-radius: unset;text-align: left;background-color: #3C8DBC;max-height: 3rem; color: white;">LEYENDA DE SEMAFOROS
+					</div>
+					<div class="card-body" style="background: #E9ECEF;font-size: 14px">
 						<div class="row">
 							<div class="col-12 pb-2">
-								<span>- Locales depositar hasta la 13:00 del siguiente día al Cierre día.</span>
+								<span id="miniText">- Locales depositar hasta la 13:00 del siguiente día al Cierre día.</span>
 							</div>
 							<div class="col-4" style="text-align: center;">
-								<span class="badge badge-info" style="font-size: 15px;cursor:pointer;color: white;" onclick="filtrarSemaforo('Menor 1')">Menor 1 día</span>
+								<span class="badge badge-info" style="cursor:pointer;color: white;" onclick="filtrarSemaforo('Menor 1')" id="miniBtn">Menor 1</span>
 							</div>
 							<div class="col-4" style="text-align: center;">
-								<span class="badge badge-warning" style="font-size: 15px;cursor:pointer;color: white;" onclick="filtrarSemaforo('Mayor 1')">Mayor 1 día</span>
+								<span class="badge badge-warning" style="cursor:pointer;color: white;" onclick="filtrarSemaforo('Mayor 1')" id="miniBtn">Mayor 1</span>
 							</div>
 							<div class="col-4" style="text-align: center;">
-								<span class="badge badge-danger" style="font-size: 15px; text-align: center;cursor:pointer;color: white;" onclick="filtrarSemaforo('Mayor 2')">Mayor 2 días</span>
+								<span class="badge badge-danger" style="text-align: center; cursor:pointer;color: white;" onclick="filtrarSemaforo('Mayor 2')" id="miniBtn">Mayor 2</span>
 							</div>
 							<div class="col-4" style="text-align: center;">
-								<span style="font-size: 12px">Mayor a las 13:00 pm.</span>
+								<span id="miniText">Desde 13:00 - 23:59</span>
 							</div>
 							<div class="col-4" style="text-align: center;">
-								<span style="font-size: 12px">Posterior a 24 Horas.</span>
+								<span id="miniText">Dia Siguiente al Cierre</span>
 							</div>
 							<div class="col-4" style="	text-align: center;">
-								<span style="font-size: 12px">Posterior a 48 Horas.</span>
+								<span id="miniText">2° Dia Posterior al Cierre</span>
 							</div>							
 						</div>
 					</div>
 				</div>
-				<div class="card col-6 pl-0 pr-0" style="border-radius: unset;border: solid 1px;border-color: #3C8DBC;">
+			</div>
+			<div class="col-xl-6 col-lg-6 col-md-8 col-sm-12 col-12 pl-0 pr-0 pb-4" id="pruebita1">
+				<div class="card pl-0 pr-0" style="border-radius: unset;border: solid 1px;border-color: #3C8DBC;">
 					<div class="card-header pt-2" style="border-radius: unset;text-align: left;background-color: #3C8DBC;max-height: 3rem; color: white;">FILTRO LOCALES DETALLE</div>
 					<div class="card-body pt-2 pb-2" style="background: #E9ECEF;font-size: 14px">
 						<div class="row">
-							<div class="col-2" style="text-align: center;">
-								<a class="badge badge-secondary" style="font-size: 15px;cursor:pointer;color: white;" onclick="mostrarTodosTabla()">Todos</a>
+							<div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-3" style="text-align: center;">
+								<a class="badge badge-secondary" style="cursor:pointer;color: white;" onclick="mostrarTodosTabla()" id="miniBtn">Todos</a>
 							</div>
 							<?php
 							if ($locDepPendiente){
 								foreach($locDepPendiente as $dato) {
 									?>
 
-									<div class="col-2 pb-1" style="text-align: center;">
-										<a class="badge badge-success" style="font-size: 15px;cursor:pointer;color: white;" onclick="ocultarDetalleTabla(<?php echo "'".$dato["locales"]."'";?>)"><?php echo $dato["locales"];?></a>
+									<div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-3 pb-2" style="text-align: center;">
+										<a class="badge badge-success" style="cursor:pointer;color: white;" onclick="ocultarDetalleTabla(<?php echo "'".$dato["locales"]."'";?>)" id="miniBtn"><?php echo $dato["locales"];?></a>
 									</div>
 
 									<?php
@@ -93,28 +135,28 @@ $locDepPendDetalle= getLocDepoPendDet("2",$dniDest);
 							?>						
 						</div>
 					</div>
-				</div>
-			</div>
+				</div>						
+			</div>				
+
 		</div>
 	</section>
 
 	<section class="container" id="jbtDetalle">
-		<div class="row mt-4 justify-content-center" id="pruebita1"> <!-- Inicia el margen desde el Top-->
+		<div class="row justify-content-center pb-4" id="pruebita1"> <!-- Inicia el margen desde el Top-->
 			<div class="col-12 pl-0 pr-0" id="pruebita1">
-				<div class="card mb-3" style="border-radius: unset;border: solid 1px;border-color: #3C8DBC;">
+				<div class="card" style="border-radius: unset;border: solid 1px;border-color: #3C8DBC;">
 					<div class="card-header pt-2" style="border-radius: unset;text-align: left;background-color: #3C8DBC;max-height: 3rem; color: white;">DETALLE DEPOSITOS PENDIENTE</div>
 					<div class="card-body" style="background: #E9ECEF">
-						<div class="table-responsive" style="height:210px;">
-
+						<div class="table-responsive" style="height:360px;">
 							<table class="table table-hover table-bordered" style="background: white;">
 								<thead style="font-size: 13px;">
-									<tr>
-										<th scope="col" style="text-align: center;">#</th>
-										<th scope="col" style="text-align: center;">Local</th>
-										<th scope="col" style="text-align: center;">Dia</th>
-										<th scope="col" style="text-align: center;">Fecha Pendiente</th>
-										<th scope="col" style="text-align: center;">Time Pendiente</th>
-										<th scope="col" style="text-align: center;">Semaforo</th>
+									<tr id="fontTrTabla">
+										<th scope="col">#</th>
+										<th scope="col">Local</th>
+										<th scope="col">Dia</th>
+										<th scope="col">Fecha Pendiente</th>
+										<th scope="col">Time Pendiente</th>
+										<th scope="col">Semaforo</th>
 									</tr>
 								</thead>
 								<tbody id="tbodyDetalle">
@@ -122,24 +164,24 @@ $locDepPendDetalle= getLocDepoPendDet("2",$dniDest);
 									if ($locDepPendDetalle){
 										foreach($locDepPendDetalle as $dato) {
 											?>
-											<tr>
+											<tr id="fontTrTabla">
 												<td scope="col" class="text-center" ><?php echo $dato["rownum"];?></td>
-												<td class="text-center" style="font-size: 13px;"><?php echo $dato["cod_local"];?></td>
-												<td class="text-center" style="font-size: 13px;"><?php echo $dato["dia_mes"];?></td>
-												<td class="text-center" style="font-size: 13px;"><?php echo $dato["fecha_pendiente"];?></td>
-												<td class="text-center" style="font-size: 13px;"><?php echo $dato["time_dif"];?></td>
+												<td class="text-center"><?php echo $dato["cod_local"];?></td>
+												<td class="text-center"><?php echo $dato["dia_mes"];?></td>
+												<td class="text-center"><?php echo $dato["fecha_pendiente"];?></td>
+												<td class="text-center"><?php echo $dato["time_dif"];?></td>
 												<td class="text-center">
 													<?php
-													$minutos = $dato["min_dif"];
-													if($minutos<=1440){
-														echo '<span class="badge badge-info">Menor 1 día</span>';
-													}else if($minutos<=2880){
-														echo '<span class="badge badge-warning">Mayor 1 día</span>';
-													}else{
-														echo '<span class="badge badge-danger">Mayor 2 días</span>';
+													$dife_min = $dato["min_dif"];
+													if($dife_min<=720){//12*60 -> medio día
+														echo '<span class="badge badge-info" id="tblSemaforo">Menor 1 día</span>';
+													}else if($dife_min<=2160){//12*60 + 24*60 -> dia y medio
+														echo '<span class="badge badge-warning" id="tblSemaforo">Mayor 1 día</span>';
+													}else{//luego del dia y medio
+														echo '<span class="badge badge-danger" id="tblSemaforo">Mayor 2 días</span>';
 													}
 													?>
-												</td>
+												</td>												
 											</tr>
 											<?php
 										}
@@ -158,7 +200,6 @@ $locDepPendDetalle= getLocDepoPendDet("2",$dniDest);
 			</div>
 		</div>		
 	</section>
-
 
 	<script src="../bootstrap/js/bootstrap.js"></script>				
 </body>

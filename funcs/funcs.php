@@ -925,6 +925,125 @@ function getLocDepPendTarde($codPoli,$jzona)
 	}
 }
 
+function getTotalizadoDepTarde($codPoli,$jzona)
+{
+	global $mysqli;
+
+	if($codPoli==2){
+		if(!$stmt = $mysqli->prepare(
+			"SELECT con.cod_local,sum(con.min_1) min_1,sum(con.may_1) may_1,sum(con.may_2) may_2,
+					sum(con.min_1)+sum(con.may_1)+sum(con.may_2) total
+				FROM(
+					SELECT td.cod_local,
+					CASE
+					WHEN dif_min<=720
+					THEN 1 ELSE 0
+					END min_1,
+					CASE
+					WHEN dif_min>720 && dif_min<=2160
+					THEN 1 ELSE 0
+					END may_1,
+					CASE
+					WHEN dif_min>2160 && dif_min<=99999
+					THEN 1 ELSE 0
+					END may_2
+					FROM tb_deposito_tarde td
+					WHERE td.num_doc_jef_zona = ?
+				) con
+				WHERE 1=1
+				GROUP BY 1
+				ORDER BY 5 DESC;
+			")){
+			die("Revisar Consulta tb_deposito_tarde!");
+		}
+	}
+
+	$stmt->bind_param('s', $jzona);
+	if(!$stmt->execute()){
+		die("Fallo la Ejecucion tb_deposito_tarde!");
+	}
+
+	$stmt->store_result();
+	$num = $stmt->num_rows;
+
+	if ($num > 0)
+	{
+		$stmt->bind_result($a,$b,$c,$d,$e);
+		while ($stmt->fetch()) {
+			$outArr[] = ['cod_local' => $a,'min_1' => $b,'may_1' => $c,'may_2' => $d,'total' => $e];
+		}
+
+		$stmt->close();
+		return $outArr;			
+	}
+	else
+	{
+		return null;	
+	}
+}
+
+function getTotalizadoDepPend($codPoli,$jzona)
+{
+	global $mysqli;
+
+	if($codPoli==2){
+		if(!$stmt = $mysqli->prepare(
+			"SELECT con2.cod_local,sum(con2.min_1) min_1,sum(con2.may_1) may_1,sum(con2.may_2) may_2
+				FROM(
+					SELECT con.cod_local,
+						CASE
+						WHEN con.min_dif<=720
+						THEN 1 ELSE 0
+						END min_1,
+						CASE
+						WHEN con.min_dif>720 && con.min_dif<=2160
+						THEN 1 ELSE 0
+						END may_1,
+						CASE
+						WHEN con.min_dif>2160 && con.min_dif<=99999
+						THEN 1 ELSE 0
+						END may_2
+					FROM(
+						SELECT cod_local,
+						TIMESTAMPDIFF(DAY, DATE_ADD(ADDTIME(td.fecha_mes,'13:00:00'),INTERVAL 1 DAY), NOW())*24*60+
+						MOD(TIMESTAMPDIFF(HOUR, DATE_ADD(ADDTIME(td.fecha_mes,'13:00:00'),INTERVAL 1 DAY), NOW()), 24)*60+
+						MOD(TIMESTAMPDIFF(MINUTE, DATE_ADD(ADDTIME(td.fecha_mes,'13:00:00'),INTERVAL 1 DAY), NOW()), 60) min_dif
+						FROM tb_deposito_pendiente td
+						WHERE td.num_doc_jef_zona = ?
+					) con
+				) con2
+				WHERE 1=1
+				GROUP BY 1
+				ORDER BY 1;
+			")){
+			die("Revisar Consulta tb_deposito_tarde!");
+		}
+	}
+
+	$stmt->bind_param('s', $jzona);
+	if(!$stmt->execute()){
+		die("Fallo la Ejecucion tb_deposito_tarde!");
+	}
+
+	$stmt->store_result();
+	$num = $stmt->num_rows;
+
+	if ($num > 0)
+	{
+		$stmt->bind_result($a,$b,$c,$d);
+		while ($stmt->fetch()) {
+			$outArr[] = ['cod_local' => $a,'min_1' => $b,'may_1' => $c,'may_2' => $d];
+		}
+
+		$stmt->close();
+		return $outArr;			
+	}
+	else
+	{
+		return null;	
+	}
+}
+
 function getDepPendTardeDet($codPoli,$jzona)
 {
 	global $mysqli;
@@ -980,6 +1099,7 @@ function getDepPendTardeDet($codPoli,$jzona)
 		return null;	
 	}
 }
+
 
 
 ?>

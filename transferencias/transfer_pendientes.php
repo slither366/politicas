@@ -23,7 +23,7 @@ include '../funcs/funcs.php';
 			$totCantLoc = $totCantLoc + 1;
 		}
 	}
-?>
+	?>
 	<html>
 	<head>
 		<title>Transferencias Pendientes</title>
@@ -176,7 +176,7 @@ include '../funcs/funcs.php';
 			};
 			$.ajax({
 				data:  parametros,
-				url:   'formEnviarCorreo.php',
+				url:   '../formEnviarCorreo.php',
 				type:  'post',
 				beforeSend: function () {
 					$("#wait_2").html("Procesando, espere por favor Procesando...");
