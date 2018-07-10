@@ -14,6 +14,9 @@ $datosTotalDepPend= getTotalizadoDepPend("2",$dniDest)
 	<title>Transferencias Pendientes</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" type="text/css" href="../bootstrap/css/bootstrap.css">
+	<script src="../js/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
 
 	<style>
 	@media (min-width: 100px) and (max-width: 450px){
@@ -39,9 +42,23 @@ $datosTotalDepPend= getTotalizadoDepPend("2",$dniDest)
 			/*background-image: url("mail2.png");*/
 			font-size:10px;
 		}
-		#tblSemaforo{
-			font-size:12px;	
+
+		#tblSemaforo, #tblSemafTotalizado{
+			font-size:10px;	
 		}
+
+		#imgCorreo{
+			width: 150%;
+		}
+
+		#divCorreo2{
+			width: 30px;
+		}
+
+		#imgCorreo2{
+			width: 70%;
+		}
+
 	}
 
 	@media (min-width: 992px) and (max-width: 2000px){
@@ -49,30 +66,125 @@ $datosTotalDepPend= getTotalizadoDepPend("2",$dniDest)
 			/*background-image: url("mail2.png");*/
 			font-size:13px;
 		}
-		#tblSemaforo{
+		#tblSemaforo, #tblSemafTotalizado{
 			font-size:13px;	
 		}
+
+		#imgCorreo{
+			width: 150%;
+		}
+
+		#divCorreo2{
+			width: 35px;
+		}
+
+		#imgCorreo2{
+			width: 70%;
+		}		
 	}
 
-</style>
+	.alertita1 {
+		position: fixed;
+		display:block; 
+		top:50%; 
+		right:20%;
+		left: 20%;
+		z-index: 99;
+			/*border-color: black;
+			border:solid 1px;*/
+		}
 
-<script type="text/javascript">
-	function ocultarDetalleTabla(codLocal){
-		$("#tbodyDetalle tr").hide();
-		$("#tbodyDetalle tr:contains("+codLocal+")").show();                
-	}
+	</style>
 
-	function mostrarTodosTabla(){
-		$("#tbodyDetalle tr").show();         
-	}
+	<script type="text/javascript">
+		var correosFrom = "";
 
-	function filtrarSemaforo(textFiltro){
-		$("#tbodyDetalle tr").hide();
-		$("#tbodyDetalle tr:contains("+textFiltro+")").show(); 
-	}
-</script>
-<!-- Bootstrap CSS -->
-<link rel="stylesheet" type="text/css" href="../bootstrap/css/bootstrap.css">
+		$(window).ready(function() {
+
+			var ventana_ancho = $(window).width();
+			if(ventana_ancho<576){
+				$("#tblSemaforoTot1").text("LOC");
+				$("#tblSemaforoTot2").text("< 1");
+				$("#tblSemaforoTot3").text("> 1");
+				$("#tblSemaforoTot4").text("> 2");
+				$("#tblSemaforoTot5").text("TOT");
+				$("#tblSemafDetTarde2").text("LOC");
+				$("#tblSemafDetTarde3").text("D.CIERRE");
+				$("#tblSemafDetTarde4").text("OP.BANC");
+				$("#tblSemafDetTarde5").text("M");
+				$("#tblSemafDetTarde6").text("MON");
+				$("#tblSemafDetTarde7").text("TIM.DIF");
+				$("#tblSemafDetTarde8").text("N°OPER");
+				$("#tblSemafDetTarde9").text("USU.LOC");
+				$("#tblSemafDetTarde10").text("SEMAF");
+			}
+
+			$("input:checkbox:checked").click(function() {
+				var local = "";
+				armarListaCorreos();
+				mostrarEnvioCorreo();//Este envío de correos se encuentra en deposito_pendiente.php
+
+				if(($("#"+$(this).attr("id")).is(':checked'))) {
+					local = $(this).attr("id");
+					alertaPantalla("Enviar Mail al" + local);
+				} 
+
+			});
+
+			armarListaCorreos();
+		});
+
+		function armarListaCorreos(){
+			correosFrom = "";
+			$("input:checkbox:checked").each(function(){
+				correosFrom = correosFrom + $(this).val().toLowerCase() + ";";
+			});
+		}
+
+		function alertaPantalla(mensaje){
+			$("#divAlertInt1").html(mensaje);
+			$(".alertita1").fadeIn(2000);
+			$(".alertita1").fadeOut(2000);
+		}
+
+		function ocultarDetalleTabla(codLocal){
+			$("#tbodyDetalle tr").hide();
+			$("#tbodyDetalle tr:contains("+codLocal+")").show(); 
+			$("#tbodyTotDet tr").hide();
+			$("#tbodyTotDet tr:contains("+codLocal+")").show();
+			$('input:checkbox').prop('checked', false);
+			$('#'+codLocal).prop('checked', true);
+			armarListaCorreos();
+			mostrarEnvioCorreo();
+		}
+
+		function mostrarTodosTabla(){
+			$("#tbodyDetalle tr").show();
+			$("#tbodyTotDet tr").show();
+
+			$('input:checkbox').prop('checked', true);
+			armarListaCorreos();
+			mostrarEnvioCorreo();
+		}
+
+		function filtrarSemaforo(textFiltro){
+			$("#tbodyDetalle tr").hide();
+			$("#tbodyDetalle tr:contains("+textFiltro+")").show(); 
+		}
+
+		$(document).ready(function(){
+			$("input:checkbox:checked").click(function() {
+			/*if(($("#"+$(this).attr("id")).is(':checked'))) {
+				$local = $(this).attr("id").substring(3,7);
+				alertaPantalla("Enviar Mail al" + $local);
+			} else {  
+						//$("#divAlertInt").html("Cambio!");  
+					}  
+
+				});*/
+			});
+		});
+	</script>
 </head>
 
 <body>
@@ -141,13 +253,77 @@ $datosTotalDepPend= getTotalizadoDepPend("2",$dniDest)
 		</div>
 	</section>
 
+	<section class="container" id="pruebita1">
+		<div class="row justify-content-left pb-4" id="pruebita1"> <!-- Inicia el margen desde el Top-->
+			<div class="col-xl-10 col-lg-12 col-md-12 col-sm-12 col-12 pl-0 pr-0" id="pruebita1">
+				<div class="card" style="border-radius: unset;border: solid 1px;border-color: #3C8DBC;">
+					<div class="card-header pt-2" style="border-radius: unset;text-align: left;background-color: #3C8DBC;max-height: 3rem; color: white;">SEMAFOROS TOTALIZADOS</div>
+					<div class="card-body" style="background: #E9ECEF">
+						<div class="table-responsive" style="max-height:220px;">
+							<table class="table table-hover table-bordered" style="background: white;" id="tbodyFilTot"> 
+								<thead>
+									<tr id="fontTrTabla">
+										<!--<th scope="col">#</th>-->
+										<th scope="col" class="text-center" id="tblSemaforoTot1">LOCAL</th>
+										<th scope="col" class="text-center"><span class="badge badge-info" id="tblSemaforoTot2">MENOR 1 DÍA</span></th>
+										<th scope="col" class="text-center"><span class="badge badge-warning" id="tblSemaforoTot3" style="color: white;">MAYOR 1 DÍA</span></th>
+										<th scope="col" class="text-center"><span class="badge badge-danger" id="tblSemaforoTot4">MAYOR 2 DÍA</span></th>
+										<th scope="col" class="text-center" style="font-weight: bold;" id="tblSemaforoTot5">TOTALES</th>
+										<th scope="col" class="text-center">MAIL</th>
+									</tr>	
+								</thead>
+								<tbody id="tbodyTotDet">
+									<?php
+									if ($datosTotalDepPend){
+										foreach($datosTotalDepPend as $dato) {							
+											?>
+											<tr id="fontTrTabla" style="height: 30px;" style="vertical-align: center" >
+												<td class="text-center pt-1 pb-0" style="font-weight: bold; vertical-align: center"><?php echo $dato["cod_local"];?></td>
+												<td class="text-center pt-1 pb-0"><?php echo $dato["min_1"];?></td>
+												<td class="text-center pt-1 pb-0"><?php echo $dato["may_1"];?></td>
+												<td class="text-center pt-1 pb-0"><?php echo $dato["may_2"];?></td>
+												<td class="text-center pt-1 pb-0" style="font-weight: bold;"><?php echo $dato["total"];?></td>
+												<td id="pruebita1" class="pt-0 pb-0 mt-0 mb-0">
+													<div class="d-flex flex-row justify-content-center align-items-end" id="pruebita1">
+														<div class="p-0 bd-highlight" id="divCorreo2">
+															<a onclick=""><img  src= "mail.svg" id="imgCorreo2"></a>
+														</div>
+														<div class="p-0 bd-highlight" id="pruebita1">
+															<div class="custom-control custom-checkbox" id="pruebita1">
+																<!--El input trabaja con el label para enviar datos a la otra pantalla-->
+																
+																<input type="checkbox" class="checkbox custom-control-input" 
+																id=<?php echo "'".$dato['cod_local']."'"?> checked="checked" 
+																value=<?php echo "'".$dato['correo']."'"?>>
+																<label class="custom-control-label" id="pruebita1" for=<?php echo "'".$dato['cod_local']."'"?>></label>
+
+															</div>
+														</div>
+													</div>
+												</td>
+											</tr>
+											<?php
+										}
+									} else {
+										echo "No se encontraron datos";
+									}
+									?>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>	
+	</section>
+
 	<section class="container" id="jbtDetalle">
 		<div class="row justify-content-center pb-4" id="pruebita1"> <!-- Inicia el margen desde el Top-->
 			<div class="col-12 pl-0 pr-0" id="pruebita1">
 				<div class="card" style="border-radius: unset;border: solid 1px;border-color: #3C8DBC;">
 					<div class="card-header pt-2" style="border-radius: unset;text-align: left;background-color: #3C8DBC;max-height: 3rem; color: white;">DETALLE DEPOSITOS PENDIENTE</div>
 					<div class="card-body" style="background: #E9ECEF">
-						<div class="table-responsive" style="height:360px;">
+						<div class="table-responsive" style="max-height:360px;">
 							<table class="table table-hover table-bordered" style="background: white;">
 								<thead style="font-size: 13px;">
 									<tr id="fontTrTabla">
@@ -191,9 +367,6 @@ $datosTotalDepPend= getTotalizadoDepPend("2",$dniDest)
 									?>
 								</tbody>
 							</table>
-						</div>
-						<div class="col-md-12 text-center">
-							<ul class="pagination pagination-lg pager" id="myPager"></ul>
 						</div>
 					</div>
 				</div>

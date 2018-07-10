@@ -15,9 +15,11 @@ $datosTotalDepTarde= getTotalizadoDepTarde("2",$dniDest)
 	<title>Transferencias Pendientes</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" type="text/css" href="../bootstrap/css/bootstrap.css">
+	<script src="../js/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
 
 	<style>
-
 	@media (min-width: 100px) and (max-width: 450px){
 		#miniBtn{
 			/*background-image: url("mail2.png");*/
@@ -41,9 +43,23 @@ $datosTotalDepTarde= getTotalizadoDepTarde("2",$dniDest)
 			/*background-image: url("mail2.png");*/
 			font-size:10px;
 		}
-		#tblSemaforo{
-			font-size:12px;	
+
+		#tblSemaforo, #tblSemafTotalizado{
+			font-size:10px;	
 		}
+
+		#imgCorreo{
+			width: 150%;
+		}
+
+		#divCorreo2{
+			width: 30px;
+		}
+
+		#imgCorreo2{
+			width: 70%;
+		}
+
 	}
 
 	@media (min-width: 992px) and (max-width: 2000px){
@@ -51,36 +67,139 @@ $datosTotalDepTarde= getTotalizadoDepTarde("2",$dniDest)
 			/*background-image: url("mail2.png");*/
 			font-size:13px;
 		}
-		#tblSemaforo{
+		#tblSemaforo, #tblSemafTotalizado{
 			font-size:13px;	
 		}
+
+		#imgCorreo{
+			width: 150%;
+		}
+
+		#divCorreo2{
+			width: 35px;
+		}
+
+		#imgCorreo2{
+			width: 70%;
+		}		
 	}
 
-</style>
+	.alertita1 {
+		position: fixed;
+		display:block; 
+		top:50%; 
+		right:20%;
+		left: 20%;
+		z-index: 99;
+			/*border-color: black;
+			border:solid 1px;*/
+		}
 
-<script type="text/javascript">
-	function ocultarDetalleTabla(codLocal){
-		$("#tbodyDetalle tr").hide();
-		$("#tbodyDetalle tr:contains("+codLocal+")").show(); 
-		$("#tbodyTotDet tr").hide();
-		$("#tbodyTotDet tr:contains("+codLocal+")").show();
-	}
+	</style>
 
-	function mostrarTodosTabla(){
-		$("#tbodyDetalle tr").show();
-		$("#tbodyTotDet tr").show();    
-	}
+	<script type="text/javascript">
+		var correosFrom = "";
 
-	function filtrarSemaforo(textFiltro){
-		$("#tbodyDetalle tr").hide();
-		$("#tbodyDetalle tr:contains("+textFiltro+")").show(); 
-	}
-</script>
-<!-- Bootstrap CSS -->
-<link rel="stylesheet" type="text/css" href="../bootstrap/css/bootstrap.css">
+		$(window).ready(function() {
+
+			var ventana_ancho = $(window).width();
+			if(ventana_ancho<576){
+				$("#tblSemaforoTot1").text("LOC");
+				$("#tblSemaforoTot2").text("< 1");
+				$("#tblSemaforoTot3").text("> 1");
+				$("#tblSemaforoTot4").text("> 2");
+				$("#tblSemaforoTot5").text("TOT");
+				$("#tblSemafDetTarde2").text("LOC");
+				$("#tblSemafDetTarde3").text("D.CIERRE");
+				$("#tblSemafDetTarde4").text("OP.BANC");
+				$("#tblSemafDetTarde5").text("M");
+				$("#tblSemafDetTarde6").text("MON");
+				$("#tblSemafDetTarde7").text("TIM.DIF");
+				$("#tblSemafDetTarde8").text("N°OPER");
+				$("#tblSemafDetTarde9").text("USU.LOC");
+				$("#tblSemafDetTarde10").text("SEMAF");
+			}
+
+			$("input:checkbox:checked").click(function() {
+				var local = "";
+				$("#frmCorreo").show();
+				armarListaCorreos();
+				mostrarEnvioCorreo();//Este envío de correos se encuentra en deposito_pendiente.php
+
+				if(($("#"+$(this).attr("id")).is(':checked'))) {
+					local = $(this).attr("id");
+					alertaPantalla("Enviar Mail al" + local);
+				} 
+
+			});
+
+			armarListaCorreos();
+		});
+
+		function armarListaCorreos(){
+			correosFrom = "";
+			$("input:checkbox:checked").each(function(){
+				correosFrom = correosFrom + $(this).val().toLowerCase() + ";";
+			});
+		}
+
+		function alertaPantalla(mensaje){
+			$("#divAlertInt1").html(mensaje);
+			$(".alertita1").fadeIn(2000);
+			$(".alertita1").fadeOut(2000);
+		}
+
+		function ocultarDetalleTabla(codLocal){
+			$("#tbodyDetalle tr").hide();
+			$("#tbodyDetalle tr:contains("+codLocal+")").show(); 
+			$("#tbodyTotDet tr").hide();
+			$("#tbodyTotDet tr:contains("+codLocal+")").show();
+			$('input:checkbox').prop('checked', false);
+			$('#'+codLocal).prop('checked', true);
+			armarListaCorreos();
+			mostrarEnvioCorreo();
+		}
+
+		function mostrarTodosTabla(){
+			$("#tbodyDetalle tr").show();
+			$("#tbodyTotDet tr").show();
+
+			$('input:checkbox').prop('checked', true);
+			armarListaCorreos();
+			mostrarEnvioCorreo();
+		}
+
+		function filtrarSemaforo(textFiltro){
+			$("#tbodyDetalle tr").hide();
+			$("#tbodyDetalle tr:contains("+textFiltro+")").show(); 
+		}
+
+		$(document).ready(function(){
+			$("input:checkbox:checked").click(function() {
+			/*if(($("#"+$(this).attr("id")).is(':checked'))) {
+				$local = $(this).attr("id").substring(3,7);
+				alertaPantalla("Enviar Mail al" + $local);
+			} else {  
+						//$("#divAlertInt").html("Cambio!");  
+					}  
+
+				});*/
+			});
+		});
+
+	</script>
 </head>
 
 <body>
+
+	<div class="alertita1" style="display:none;">
+		<div class="row justify-content-center">
+			<div class="col col-xl-4 col-lg-4 col-md-5 col-sm-6 col-10 text-center alert alert-success" role="alert" id="divAlertInt1">
+				Enviar Correo a C54.
+			</div>
+		</div>
+	</div>
+
 	<section class="container" id="pruebita1">
 		<div class="row justify-content-between"> <!-- Inicia el margen desde el Top -->
 			<div class="col-xl-5 col-lg-5 col-md-8 col-sm-12 col-12 pl-0 pr-0 pb-4" id="pruebita1">
@@ -147,41 +266,50 @@ $datosTotalDepTarde= getTotalizadoDepTarde("2",$dniDest)
 
 	<section class="container" id="pruebita1">
 		<div class="row justify-content-left pb-4" id="pruebita1"> <!-- Inicia el margen desde el Top-->
-			<div class="col-8 pl-0 pr-0" id="pruebita1">
+			<div class="col-xl-10 col-lg-12 col-md-12 col-sm-12 col-12 pl-0 pr-0" id="pruebita1">
 				<div class="card" style="border-radius: unset;border: solid 1px;border-color: #3C8DBC;">
-					<div class="card-header pt-2" style="border-radius: unset;text-align: left;background-color: #3C8DBC;max-height: 3rem; color: white;">Semaforos Totalizados</div>
+					<div class="card-header pt-2" style="border-radius: unset;text-align: left;background-color: #3C8DBC;max-height: 3rem; color: white;">SEMAFOROS TOTALIZADOS</div>
 					<div class="card-body" style="background: #E9ECEF">
 						<div class="table-responsive" style="max-height:220px;">
-							<table class="table table-hover table-bordered" style="background: white;">
-								<thead style="font-size: 13px;">
+							<table class="table table-hover table-bordered" style="background: white;" id="tbodyFilTot"> 
+								<thead>
 									<tr id="fontTrTabla">
 										<!--<th scope="col">#</th>-->
-										<th scope="col" class="text-center">LOCAL</th>
-										<th scope="col" class="text-center"><span class="badge badge-info" id="tblSemaforo">MENOR 1 DÍA</span></th>
-										<th scope="col" class="text-center"><span class="badge badge-warning" id="tblSemaforo" style="color: white;">MAYOR 1 DÍA</span></th>
-										<th scope="col" class="text-center"><span class="badge badge-danger" id="tblSemaforo">MAYOR 2 DÍA</span></th>
-										<th scope="col" class="text-center" style="font-weight: bold;">TOTALES</th>
-										<th scope="col">MAIL</th>
-									</tr>
+										<th scope="col" class="text-center" id="tblSemaforoTot1">LOCAL</th>
+										<th scope="col" class="text-center"><span class="badge badge-info" id="tblSemaforoTot2">MENOR 1 DÍA</span></th>
+										<th scope="col" class="text-center"><span class="badge badge-warning" id="tblSemaforoTot3" style="color: white;">MAYOR 1 DÍA</span></th>
+										<th scope="col" class="text-center"><span class="badge badge-danger" id="tblSemaforoTot4">MAYOR 2 DÍA</span></th>
+										<th scope="col" class="text-center" style="font-weight: bold;" id="tblSemaforoTot5">TOTALES</th>
+										<th scope="col" class="text-center">MAIL</th>
+									</tr>	
 								</thead>
 								<tbody id="tbodyTotDet">
 									<?php
 									if ($datosTotalDepTarde){
 										foreach($datosTotalDepTarde as $dato) {							
 											?>
-											<tr id="fontTrTabla" style="height: 10px;">
-												<td class="text-center pt-1 pb-1" style="font-weight: bold;"><?php echo $dato["cod_local"];?></td>
-												<td class="text-center pt-1 pb-1"><?php echo $dato["min_1"];?></td>
-												<td class="text-center pt-1 pb-1"><?php echo $dato["may_1"];?></td>
-												<td class="text-center pt-1 pb-1"><?php echo $dato["may_2"];?></td>
-												<td class="text-center pt-1 pb-1" style="font-weight: bold;"><?php echo $dato["total"];?></td>
-												<td>
-													<div class="flex-grow-1 custom-control custom-checkbox align-middle" id="pruebita1" style="text-align:right;">
-														<!--El input trabaja con el label para enviar datos a la otra pantalla-->
-														<input type="checkbox" class="checkbox custom-control-input" 
-														checked="checked" 
-														value="">
-														<label class="custom-control-label"></label>
+											<tr id="fontTrTabla" style="height: 30px;" style="vertical-align: center" >
+												<td class="text-center pt-1 pb-0" style="font-weight: bold; vertical-align: center"><?php echo $dato["cod_local"];?></td>
+												<td class="text-center pt-1 pb-0"><?php echo $dato["min_1"];?></td>
+												<td class="text-center pt-1 pb-0"><?php echo $dato["may_1"];?></td>
+												<td class="text-center pt-1 pb-0"><?php echo $dato["may_2"];?></td>
+												<td class="text-center pt-1 pb-0" style="font-weight: bold;"><?php echo $dato["total"];?></td>
+												<td id="pruebita1" class="pt-0 pb-0 mt-0 mb-0">
+													<div class="d-flex flex-row justify-content-center align-items-end" id="pruebita1">
+														<div class="p-0 bd-highlight" id="divCorreo2">
+															<a onclick=""><img  src= "mail.svg" id="imgCorreo2"></a>
+														</div>
+														<div class="p-0 bd-highlight" id="pruebita1">
+															<div class="custom-control custom-checkbox" id="pruebita1">
+																<!--El input trabaja con el label para enviar datos a la otra pantalla-->
+																
+																<input type="checkbox" class="checkbox custom-control-input" 
+																id=<?php echo "'".$dato['cod_local']."'"?> checked="checked" 
+																value=<?php echo "'".$dato['correo']."'"?>>
+																<label class="custom-control-label" id="pruebita1" for=<?php echo "'".$dato['cod_local']."'"?>></label>
+
+															</div>
+														</div>
 													</div>
 												</td>
 											</tr>
@@ -210,16 +338,16 @@ $datosTotalDepTarde= getTotalizadoDepTarde("2",$dniDest)
 							<table class="table table-hover table-bordered" style="background: white;">
 								<thead style="font-size: 13px;">
 									<tr id="fontTrTabla">
-										<th scope="col">#</th>
-										<th scope="col">Local</th>
-										<th scope="col">Dia Cierre</th>
-										<th scope="col">Dia Oper.Bancaria</th>
-										<th scope="col">Mon</th>
-										<th scope="col">Monto</th>
-										<th scope="col">Time Diferencia</th>
-										<th scope="col">N°.Operacion</th>
-										<th scope="col">Usuario Local</th>
-										<th scope="col">Semaforo</th>
+										<th scope="col" id="tblSemafDetTarde1" class="text-center">#</th>
+										<th scope="col" id="tblSemafDetTarde2" class="text-center">Local</th>
+										<th scope="col" id="tblSemafDetTarde3" class="text-center">Dia Cierre</th>
+										<th scope="col" id="tblSemafDetTarde4" class="text-center">Dia Oper.Bancaria</th>
+										<th scope="col" id="tblSemafDetTarde5" class="text-center">Mon</th>
+										<th scope="col" id="tblSemafDetTarde6" class="text-center">Monto</th>
+										<th scope="col" id="tblSemafDetTarde7" class="text-center">Time Diferencia</th>
+										<th scope="col" id="tblSemafDetTarde8" class="text-center">N°.Operacion</th>
+										<th scope="col" id="tblSemafDetTarde9" class="text-center">Usuario Local</th>
+										<th scope="col" id="tblSemafDetTarde10" class="text-center">Semaforo</th>
 									</tr>
 								</thead>
 								<tbody id="tbodyDetalle">
@@ -228,7 +356,7 @@ $datosTotalDepTarde= getTotalizadoDepTarde("2",$dniDest)
 										foreach($datosDepoTardeDet as $dato) {							
 											?>
 											<tr id="fontTrTabla">
-												<td scope="col" class="text-center"><?php echo $dato["rownum"];?></td>
+												<td scope="col" class="text-center" id="tblSemafDetTarFirst"><?php echo $dato["rownum"];?></td>
 												<td class="text-center" style="font-weight: bold;"><?php echo $dato["cod_local"];?></td>
 												<td class="text-center"><?php echo $dato["fech_cierre"];?></td>
 												<td class="text-center"><?php echo $dato["fech_oper"];?></td>

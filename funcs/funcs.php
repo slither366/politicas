@@ -820,9 +820,9 @@ function getLocDepoPendDet($codPoli,$jzona)
 		if(!$stmt = $mysqli->prepare(
 			"SELECT (@rownum:=@rownum+1) AS rownum,td.cod_local,td.dia_mes,Date_format(td.fecha_mes,'%d/%m/%Y') fecha_pendiente,td.num_doc_jef_zona,
 			CONCAT( 
-			    TIMESTAMPDIFF(DAY, DATE_ADD(ADDTIME(td.fecha_mes,'13:00:00'),INTERVAL 1 DAY), NOW()), ' dias, ', 
-			    MOD(TIMESTAMPDIFF(HOUR, DATE_ADD(ADDTIME(td.fecha_mes,'13:00:00'),INTERVAL 1 DAY), NOW()), 24), ' horas y ', 
-			    MOD(TIMESTAMPDIFF(MINUTE, DATE_ADD(ADDTIME(td.fecha_mes,'13:00:00'),INTERVAL 1 DAY), NOW()), 60), ' minutos' 
+			TIMESTAMPDIFF(DAY, DATE_ADD(ADDTIME(td.fecha_mes,'13:00:00'),INTERVAL 1 DAY), NOW()), ' dias, ', 
+			MOD(TIMESTAMPDIFF(HOUR, DATE_ADD(ADDTIME(td.fecha_mes,'13:00:00'),INTERVAL 1 DAY), NOW()), 24), ' horas y ', 
+			MOD(TIMESTAMPDIFF(MINUTE, DATE_ADD(ADDTIME(td.fecha_mes,'13:00:00'),INTERVAL 1 DAY), NOW()), 60), ' minutos' 
 			) time_dif,
 			TIMESTAMPDIFF(DAY, DATE_ADD(ADDTIME(td.fecha_mes,'13:00:00'),INTERVAL 1 DAY), NOW())*24*60+
 			MOD(TIMESTAMPDIFF(HOUR, DATE_ADD(ADDTIME(td.fecha_mes,'13:00:00'),INTERVAL 1 DAY), NOW()), 24)*60+
@@ -931,28 +931,32 @@ function getTotalizadoDepTarde($codPoli,$jzona)
 
 	if($codPoli==2){
 		if(!$stmt = $mysqli->prepare(
-			"SELECT con.cod_local,sum(con.min_1) min_1,sum(con.may_1) may_1,sum(con.may_2) may_2,
-					sum(con.min_1)+sum(con.may_1)+sum(con.may_2) total
-				FROM(
-					SELECT td.cod_local,
-					CASE
-					WHEN dif_min<=720
-					THEN 1 ELSE 0
-					END min_1,
-					CASE
-					WHEN dif_min>720 && dif_min<=2160
-					THEN 1 ELSE 0
-					END may_1,
-					CASE
-					WHEN dif_min>2160 && dif_min<=99999
-					THEN 1 ELSE 0
-					END may_2
-					FROM tb_deposito_tarde td
-					WHERE td.num_doc_jef_zona = ?
-				) con
-				WHERE 1=1
-				GROUP BY 1
-				ORDER BY 5 DESC;
+			"SELECT con2.cod_local,tl.correo,con2.min_1,con2.may_1,con2.may_2,con2.total
+			FROM(
+			SELECT con.cod_local,sum(con.min_1) min_1,sum(con.may_1) may_1,sum(con.may_2) may_2,
+			sum(con.min_1)+sum(con.may_1)+sum(con.may_2) total
+			FROM(
+			SELECT td.cod_local,
+			CASE
+			WHEN dif_min<=720 /*Hay 12Horas por 60 minutos*/
+			THEN 1 ELSE 0
+			END min_1,
+			CASE
+			WHEN dif_min>720 && dif_min<=2160 /*Hay 12Horas por 60min + 24Horas por 60min*/
+			THEN 1 ELSE 0
+			END may_1,
+			CASE
+			WHEN dif_min>2160 && dif_min<=99999 /*Mayor a las 36 Horas*/
+			THEN 1 ELSE 0
+			END may_2
+			FROM tb_deposito_tarde td
+			WHERE td.num_doc_jef_zona =?
+			) con
+			WHERE 1=1
+			GROUP BY 1
+			) con2, tb_locales tl
+			WHERE con2.cod_local = tl.cod_local
+			ORDER BY 6 DESC;
 			")){
 			die("Revisar Consulta tb_deposito_tarde!");
 		}
@@ -968,9 +972,9 @@ function getTotalizadoDepTarde($codPoli,$jzona)
 
 	if ($num > 0)
 	{
-		$stmt->bind_result($a,$b,$c,$d,$e);
+		$stmt->bind_result($a,$b,$c,$d,$e,$f);
 		while ($stmt->fetch()) {
-			$outArr[] = ['cod_local' => $a,'min_1' => $b,'may_1' => $c,'may_2' => $d,'total' => $e];
+			$outArr[] = ['cod_local' => $a,'correo' => $b ,'min_1' => $c,'may_1' => $d,'may_2' => $e,'total' => $f];
 		}
 
 		$stmt->close();
@@ -988,7 +992,10 @@ function getTotalizadoDepPend($codPoli,$jzona)
 
 	if($codPoli==2){
 		if(!$stmt = $mysqli->prepare(
-			"SELECT con2.cod_local,sum(con2.min_1) min_1,sum(con2.may_1) may_1,sum(con2.may_2) may_2
+			"SELECT con3.cod_local,tl.correo,con3.min_1,con3.may_1,con3.may_2,con3.total
+			FROM(
+				SELECT con2.cod_local,sum(con2.min_1) min_1,sum(con2.may_1) may_1,sum(con2.may_2) may_2,
+							 sum(con2.min_1)+sum(con2.may_1)+sum(con2.may_2) total
 				FROM(
 					SELECT con.cod_local,
 						CASE
@@ -1012,17 +1019,18 @@ function getTotalizadoDepPend($codPoli,$jzona)
 						WHERE td.num_doc_jef_zona = ?
 					) con
 				) con2
-				WHERE 1=1
 				GROUP BY 1
-				ORDER BY 1;
+			) con3, tb_locales tl
+			WHERE con3.cod_local = tl.cod_local
+			ORDER BY 6 DESC;
 			")){
-			die("Revisar Consulta tb_deposito_tarde!");
+			die("Revisar Consulta tb_deposito_pendiente!");
 		}
 	}
 
 	$stmt->bind_param('s', $jzona);
 	if(!$stmt->execute()){
-		die("Fallo la Ejecucion tb_deposito_tarde!");
+		die("Fallo la Ejecucion tb_deposito_pendiente!");
 	}
 
 	$stmt->store_result();
@@ -1030,13 +1038,13 @@ function getTotalizadoDepPend($codPoli,$jzona)
 
 	if ($num > 0)
 	{
-		$stmt->bind_result($a,$b,$c,$d);
+		$stmt->bind_result($a,$b,$c,$d,$e,$f);
 		while ($stmt->fetch()) {
-			$outArr[] = ['cod_local' => $a,'min_1' => $b,'may_1' => $c,'may_2' => $d];
+			$outArr[] = ['cod_local' => $a,'correo' => $b ,'min_1' => $c,'may_1' => $d,'may_2' => $e,'total' => $f];
 		}
 
 		$stmt->close();
-		return $outArr;			
+		return $outArr;
 	}
 	else
 	{

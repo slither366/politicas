@@ -49,8 +49,8 @@ include '../funcs/funcs.php';
 		}
 
 		#pruebita1{
-			border: solid 1px;
-			border-color: black;
+			/*border: solid 1px;
+			border-color: black;*/
 		}
 
 		.linkCorreo {
@@ -93,7 +93,7 @@ include '../funcs/funcs.php';
 		@media (min-width: 100px) and (max-width: 400px){
 			#imgCorreo{
 				width: 100%;
-			}
+			}	
 
 			.linkCorreo {
 				right: 0px;
@@ -103,17 +103,24 @@ include '../funcs/funcs.php';
 		@media (min-width: 400px) and (max-width: 1800px){
 			#imgCorreo{
 				width: 150%;
-			}
+			}		
 
 			.linkCorreo {
 				right: 18px;
-			}
+			}	
 		}
 
 	</style>
 
 	<script type="text/javascript">
+		var titCorreo = "";
+		var desCorreo = "";
+
 		function mostrarDetDepositoPend(dni_zonal){
+			titCorreo = "Depositos Bancarios Pendientes a la Fecha";
+			desCorreo = "Actualmente se verifica que su local cuenta con dinero de cierres no depositados a la fecha, por favor depositarlo a la brevedad y tener mas cuidado ya que se tomarán medidas en caso se siga repitiendo este tipo de falta.";
+
+			$("#frmCorreo").hide();
 			var parametros = {
 				"jefeDestino" : dni_zonal
 			};
@@ -131,6 +138,10 @@ include '../funcs/funcs.php';
 		}
 
 		function mostrarDetDepositoTarde(dni_zonal){
+			titCorreo = "Tener cuidado con los Depositos Bancarios Tardes";
+			desCorreo = "Actualmente se verifica que su local se encuentra depositando el dinero del cierre luego del horario mínimo establecido (Hasta las 13:00 día siguiente al Cierre!), favor tener mas cuidado ya que se tomarán medidas en caso se siga repitiendo este tipo de falta.";
+
+			$("#frmCorreo").hide();
 			var parametros = {
 				"jefeDestino" : dni_zonal
 			};
@@ -145,11 +156,14 @@ include '../funcs/funcs.php';
 					$("#section2").html(response);
 				}
 			});
-		}	
+		}
 
-		function mostrarEnvioCorreo(mailDest){
+		function mostrarEnvioCorreo(){
+			$("#frmCorreo").show();
 			var parametros = {
-				"correo_dest" : mailDest
+				"correo_destino" : correosFrom, //esta variable se trae de la web detDepositoTarde.php
+				"correo_tit"  : titCorreo,
+				"correo_des"  : desCorreo
 			};
 			$.ajax({
 				data:  parametros,
@@ -171,9 +185,9 @@ include '../funcs/funcs.php';
 
 	<div class="linkCorreo">
 		<div >
-			<a onclick="mostrarEnvioCorreo('dflores@mifarma.com.pe');return false;"><img src= "mail.svg" id="imgCorreo"></a>
+			<a onclick="mostrarEnvioCorreo();return false;" id="linkCorreo1"><img src= "mail.svg" id="imgCorreo"></a>
 		</div>
-	</div>
+	</div>	
 
 	<nav class="navbar navbar-expand-sm navbar-expand-md navbar-expand-lg navbar-dark bg-primary sticky-top">
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">

@@ -248,7 +248,7 @@ include '../funcs/funcs.php';
 
 		function armarListaCorreos(){
 			var correosFrom = "";
-			$("input:checkbox:checked").each(function() {
+			$("input:checkbox:checked").each(function(){
 								//alert($(this).val());
 								//alert($(this).attr("id"));
 								correosFrom = correosFrom + $(this).val() + ";";
@@ -257,7 +257,7 @@ include '../funcs/funcs.php';
 					mostrarEnvioCorreo(correosFrom);
 				}
 
-				$(window).ready(function(){
+		$(window).ready(function(){
 
 					$("input:checkbox:checked").click(function() {
 						armarListaCorreos();
@@ -303,6 +303,7 @@ include '../funcs/funcs.php';
 
 			<body id="bodyTransfer">
 				<div id="overlay"></div>
+
 				<div class="alertita1" style="display:none;">
 					<div class="row justify-content-center">
 						<div class="col col-xl-4 col-lg-4 col-md-5 col-sm-6 col-10 text-center alert alert-success" role="alert" id="divAlertInt1">

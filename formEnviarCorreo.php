@@ -3,10 +3,13 @@ session_start();
 require 'funcs/conexion.php';
 include 'funcs/funcs.php';
 
-$mailDest = $_POST['correo_dest'];
+$mailDest = $_POST['correo_destino'];
+$mailTit = $_POST['correo_tit'];
+$mailDesc = $_POST['correo_des'];
 
+/*
 $GLOBALS['titCorreo'] = "Estimados por favor cerrar sus Guias de Transferencias Pendientes";
-$GLOBALS['desCorreo'] = "Actualmente se cuenta con un buen numero de Guias de Transferencias Pendientes en sus locales. Si necesitan algún apoyo por favor no duden en contactarme.";
+$GLOBALS['desCorreo'] = "Actualmente se cuenta con un buen numero de Guias de Transferencias Pendientes en sus locales. Si necesitan algún apoyo por favor no duden en contactarme.";*/
 ?>
 
 <html>
@@ -68,7 +71,7 @@ $GLOBALS['desCorreo'] = "Actualmente se cuenta con un buen numero de Guias de Tr
 			<div class="div col-xl-6 col-lg-6 col-md-8 col-12" id="col1">
 
 				<div class="card border-white">
-					<div class="card-header bg-primary text-center">
+					<div class="card-header bg-info text-center">
 						<h5 class="card-title font-weight-light text-light">Enviar Correo</h5>
 					</div>
 
@@ -84,7 +87,7 @@ $GLOBALS['desCorreo'] = "Actualmente se cuenta con un buen numero de Guias de Tr
 
 								<div class="form-group">
 									<label for="titulo">Titulo:</label>
-									<input type="text" class="form-control" name="titulo" placeholder="Escribe el Titulo de Tu correo" id="titulo" value=<?php echo "'".$titCorreo."'" ?> 
+									<input type="text" class="form-control" name="titulo" placeholder="Escribe el Titulo de Tu correo" id="titulo" value=<?php echo "'".$mailTit."'" ?> 
 									required>
 								</div>
 
@@ -96,7 +99,7 @@ $GLOBALS['desCorreo'] = "Actualmente se cuenta con un buen numero de Guias de Tr
 
 								<div class="form-group">
 									<label for="detCorreo">Descripcion:</label>
-									<textarea class="form-control" name="detCorreo" rows="6" id="detCorreo"><?php echo $desCorreo ?></textarea>
+									<textarea class="form-control" name="detCorreo" rows="6" id="detCorreo"><?php echo $mailDesc ?></textarea>
 								</div>
 
 								<div class="form-group d-flex justify-content-center">                      
