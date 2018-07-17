@@ -49,7 +49,7 @@ include '../funcs/funcs.php';
 			padding-top: 0px;
 			padding-bottom: 0px;
 			margin-bottom: 0px;
-			background-color: #E9ECEF;
+			background-color: #F3F3F3;
 		}
 		
 		#jbtDetalle{
@@ -257,7 +257,7 @@ include '../funcs/funcs.php';
 					mostrarEnvioCorreo(correosFrom);
 				}
 
-		$(window).ready(function(){
+				$(window).ready(function(){
 
 					$("input:checkbox:checked").click(function() {
 						armarListaCorreos();
@@ -326,14 +326,10 @@ include '../funcs/funcs.php';
 					</div>
 				</div>
 
-				<nav class="navbar navbar-expand-sm navbar-expand-md navbar-expand-lg navbar-dark bg-primary sticky-top">
-					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-						<span class="navbar-toggler-icon"></span>
-					</button>  
+				<nav class="navbar navbar-expand-sm navbar-expand-md navbar-expand-lg navbar-dark sticky-top mt-0 pt-0 pb-0 mb-0" id="pruebita1" style="background:#E30313">
 
-					<a class="navbar-brand" href="../welcome.php">
-						<img src="../images/logo.png" width="40" height="30" class="d-inline-block align-top" alt="Logo">
-						TaskManager
+					<a class="navbar-brand pt-0 mt-0 mb-0 pb-0" href="#" id="pruebita1" style="width: 150px">
+						<img src="../images/LogoFP.png" class="d-inline-block align-top" alt="Logo" id="pruebita1" style="width: 100%;height: 100%">
 					</a>
 
 					<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
@@ -344,10 +340,10 @@ include '../funcs/funcs.php';
 								<a class="nav-item nav-link" href="registro.php">Registrar Usuario</a>
 							<?php } ?>
 						</div>
-					</div>  
+					</div>  	
 					<div class="d-flex justify-content-around">
 						<a href="../logout.php" class="btn btn-danger border-white">Cerrar Sesi&oacute;n</a>
-					</div>
+					</div>		
 				</nav>
 
 				<section class="container">
