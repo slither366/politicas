@@ -328,8 +328,8 @@ include '../funcs/funcs.php';
 
 				<nav class="navbar navbar-expand-sm navbar-expand-md navbar-expand-lg navbar-dark sticky-top mt-0 pt-0 pb-0 mb-0" id="pruebita1" style="background:#E30313">
 
-					<a class="navbar-brand pt-0 mt-0 mb-0 pb-0" href="#" id="pruebita1" style="width: 150px">
-						<img src="../images/LogoFP.png" class="d-inline-block align-top" alt="Logo" id="pruebita1" style="width: 100%;height: 100%">
+					<a class="navbar-brand pt-0 mt-0 mb-0 pb-0" href="../welcome.php" id="pruebita1">
+						<img src="../images/LogoFP.png" class="d-inline-block align-top" alt="Logo" id="pruebita1" style="width: 150px">
 					</a>
 
 					<div class="collapse navbar-collapse" id="navbarNavAltMarkup">

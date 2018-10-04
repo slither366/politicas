@@ -994,32 +994,32 @@ function getTotalizadoDepPend($codPoli,$jzona)
 		if(!$stmt = $mysqli->prepare(
 			"SELECT con3.cod_local,tl.correo,con3.min_1,con3.may_1,con3.may_2,con3.total
 			FROM(
-				SELECT con2.cod_local,sum(con2.min_1) min_1,sum(con2.may_1) may_1,sum(con2.may_2) may_2,
-							 sum(con2.min_1)+sum(con2.may_1)+sum(con2.may_2) total
-				FROM(
-					SELECT con.cod_local,
-						CASE
-						WHEN con.min_dif<=720
-						THEN 1 ELSE 0
-						END min_1,
-						CASE
-						WHEN con.min_dif>720 && con.min_dif<=2160
-						THEN 1 ELSE 0
-						END may_1,
-						CASE
-						WHEN con.min_dif>2160 && con.min_dif<=99999
-						THEN 1 ELSE 0
-						END may_2
-					FROM(
-						SELECT cod_local,
-						TIMESTAMPDIFF(DAY, DATE_ADD(ADDTIME(td.fecha_mes,'13:00:00'),INTERVAL 1 DAY), NOW())*24*60+
-						MOD(TIMESTAMPDIFF(HOUR, DATE_ADD(ADDTIME(td.fecha_mes,'13:00:00'),INTERVAL 1 DAY), NOW()), 24)*60+
-						MOD(TIMESTAMPDIFF(MINUTE, DATE_ADD(ADDTIME(td.fecha_mes,'13:00:00'),INTERVAL 1 DAY), NOW()), 60) min_dif
-						FROM tb_deposito_pendiente td
-						WHERE td.num_doc_jef_zona = ?
-					) con
-				) con2
-				GROUP BY 1
+			SELECT con2.cod_local,sum(con2.min_1) min_1,sum(con2.may_1) may_1,sum(con2.may_2) may_2,
+			sum(con2.min_1)+sum(con2.may_1)+sum(con2.may_2) total
+			FROM(
+			SELECT con.cod_local,
+			CASE
+			WHEN con.min_dif<=720
+			THEN 1 ELSE 0
+			END min_1,
+			CASE
+			WHEN con.min_dif>720 && con.min_dif<=2160
+			THEN 1 ELSE 0
+			END may_1,
+			CASE
+			WHEN con.min_dif>2160 && con.min_dif<=99999
+			THEN 1 ELSE 0
+			END may_2
+			FROM(
+			SELECT cod_local,
+			TIMESTAMPDIFF(DAY, DATE_ADD(ADDTIME(td.fecha_mes,'13:00:00'),INTERVAL 1 DAY), NOW())*24*60+
+			MOD(TIMESTAMPDIFF(HOUR, DATE_ADD(ADDTIME(td.fecha_mes,'13:00:00'),INTERVAL 1 DAY), NOW()), 24)*60+
+			MOD(TIMESTAMPDIFF(MINUTE, DATE_ADD(ADDTIME(td.fecha_mes,'13:00:00'),INTERVAL 1 DAY), NOW()), 60) min_dif
+			FROM tb_deposito_pendiente td
+			WHERE td.num_doc_jef_zona = ?
+			) con
+			) con2
+			GROUP BY 1
 			) con3, tb_locales tl
 			WHERE con3.cod_local = tl.cod_local
 			ORDER BY 6 DESC;
@@ -1108,6 +1108,184 @@ function getDepPendTardeDet($codPoli,$jzona)
 	}
 }
 
+function getCountLocRemesasTodos($codPoli,$jzona)
+{
+	global $mysqli;
 
+	$param = "%".$jzona."%";
+	if($codPoli==3){
+		if(!$stmt = $mysqli->prepare(
+			"SELECT count(distinct(cod_local)) cod_local
+			FROM tb_remesa_pend tr
+			WHERE num_doc_jef_zona like ? ")){
+			die("Revisar Consulta tb_remesa_pend!");
+		}
+	}
+
+	$stmt->bind_param('s', $param);
+	if(!$stmt->execute()){
+		die("Fallo la Ejecucion getCountLocRemesas!");
+	}
+
+	$stmt->store_result();
+	$num = $stmt->num_rows;
+
+	if ($num > 0){
+		$stmt->bind_result($_campo);
+		$stmt->fetch();
+		return $_campo;		
+	}
+	else{
+		return null;
+	}
+}
+
+function getMesRemesas($codPoli,$jzona)
+{
+	global $mysqli;
+
+	$param = "%".$jzona."%";
+	if($codPoli==3){
+		if(!$stmt = $mysqli->prepare(
+			"SELECT distinct(DATE_FORMAT(tr.fecha_creacion_sobre,'%m')) MES
+			FROM tb_remesa_pend tr
+			WHERE tr.num_doc_jef_zona like ?")){
+			die("Revisar Consulta tb_remesa_pend!");
+		}
+	}
+
+	$stmt->bind_param('s', $param);
+	if(!$stmt->execute()){
+		die("Fallo la Ejecucion tb_remesa_pend!");
+	}
+
+	$stmt->store_result();
+	$num = $stmt->num_rows;
+
+	if ($num > 0){
+		$stmt->bind_result($a);
+		while ($stmt->fetch()) {
+			$nomMes = getNomMes($a);
+			$outArr[] = ['mes' => $nomMes, 'numMes'=> $a];
+		}
+
+		$stmt->close();
+		return $outArr;		
+	}
+	else{
+		return null;
+	}
+}
+
+function getNomMes($codMes){
+
+	$i = (int)$codMes;
+
+	switch ($i) {
+		case 1:
+			$nomMes = 'Enero';break;
+		case 2:
+			$nomMes = 'Febrero';break;
+		case 3:
+			$nomMes = 'Marzo';break;
+		case 4:
+			$nomMes = 'Abril';break;
+		case 5:
+			$nomMes = 'Mayo';break;
+		case 6:
+			$nomMes = 'Junio';break;
+		case 7:
+			$nomMes = 'Julio';break;
+		case 8:
+			$nomMes = 'Agosto';break;
+		case 9:
+			$nomMes = 'Setiembre';break;
+		case 10:
+			$nomMes = 'Octubre';break;
+		case 11:
+			$nomMes = 'Noviembre';break;
+		case 12:
+			$nomMes = 'Diciembre';break;
+	}
+	return $nomMes;	
+}
+
+function getCountLocRemesasMes($codPoli,$mes,$jzona)
+{        
+	global $mysqli;
+
+	$pMes = "%".$mes."%";	
+	$pJzona = "%".$jzona."%";
+	if($codPoli==3){
+		if(!$stmt = $mysqli->prepare(
+			"SELECT count(distinct(tr.cod_local))
+			 FROM tb_remesa_pend tr
+			 WHERE DATE_FORMAT(tr.fecha_creacion_sobre,'%m') like?
+			 AND tr.est_dif <> '0'
+			 AND tr.num_doc_jef_zona like?
+			 ORDER BY 1;")){
+			die("Revisar Consulta tb_remesa_pend!");
+		}
+	}
+
+	$stmt->bind_param('ss', $pMes, $pJzona);
+	if(!$stmt->execute()){
+		die("Fallo la Ejecucion tb_remesa_pend!");
+	}
+
+	$stmt->store_result();
+	$num = $stmt->num_rows;
+
+	if ($num > 0){
+		$stmt->bind_result($_campo);
+		$stmt->fetch();
+		return $_campo;		
+	}
+	else{
+		return null;
+	}
+}
+
+function getLocRemPend($codPoli,$mes,$jzona)
+{
+	global $mysqli;
+
+	$pMes = "%".$mes."%";
+	$pJzona = "%".$jzona."%";
+	if($codPoli==3){
+		if(!$stmt = $mysqli->prepare(
+			"SELECT distinct(tr.cod_local)
+			 FROM tb_remesa_pend tr
+			 WHERE DATE_FORMAT(tr.fecha_creacion_sobre,'%m') like?
+			 AND tr.est_dif <> '0'
+			 AND tr.num_doc_jef_zona like?
+			 ORDER BY 1")){
+			die("Revisar Consulta tb_remesa_pend!");
+		}
+	}
+
+	$stmt->bind_param('ss',$pMes ,$pJzona);
+	if(!$stmt->execute()){
+		die("Fallo la Ejecucion tb_remesa_pend!");
+	}
+
+	$stmt->store_result();
+	$num = $stmt->num_rows;
+
+	if ($num > 0)
+	{
+		$stmt->bind_result($a);
+		while ($stmt->fetch()) {
+			$outArr[] = ['locales' => $a];
+		}
+
+		$stmt->close();
+		return $outArr;			
+	}
+	else
+	{
+		return null;	
+	}
+}
 
 ?>

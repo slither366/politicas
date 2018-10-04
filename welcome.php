@@ -35,7 +35,7 @@ const TIP_PEND_RECEP = 1;
 			background-color: #F3F3F3;
 		}
 
-		#altoCard{
+		/*#altoCard{
 			height: 180px;
 		}
 
@@ -63,17 +63,17 @@ const TIP_PEND_RECEP = 1;
 
 		.card-title{
 			text-align: center;
-		}
+		}*/
 
 		#etiqueta{
 			cursor:pointer;
 		}
-/*
-		#pruebita1{
+
+		/*#pruebita1{
 			border: solid 1px;
 			border-color: black;
-		}
-*/
+		}*/
+
 		@media (min-width: 100px) and (max-width: 400px){
 			.Titulo{
 				font-size:20px;
@@ -138,8 +138,8 @@ const TIP_PEND_RECEP = 1;
 
 	<nav class="navbar navbar-expand-sm navbar-expand-md navbar-expand-lg navbar-dark sticky-top mt-0 pt-0 pb-0 mb-0" id="pruebita1" style="background:#E30313">
 
-		<a class="navbar-brand pt-0 mt-0 mb-0 pb-0" href="#" id="pruebita1" style="width: 150px">
-			<img src="images/LogoFP.png" class="d-inline-block align-top" alt="Logo" id="pruebita1" style="width: 100%;height: 100%">
+		<a class="navbar-brand pt-0 mt-0 mb-0 pb-0" href="#" id="pruebita1">
+			<img src="images/LogoFP.png" class="d-inline-block align-top" alt="Logo" id="pruebita1" style="width: 150px;">
 		</a>
 
 		<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
@@ -235,6 +235,7 @@ const TIP_PEND_RECEP = 1;
 
 			<div class="col-xl-3 col-lg-4 col-md-4 col-sm-6 col-12 pb-4" id="pruebita1">
 				<div class="card " id="pruebita1" style="background: #E99926;">
+
 					<div class="card-body text-white mt-3 pt-0 mb-2 pb-0 ml-2 pl-0 mr-2 pr-0" id="pruebita1">
 						<div class="d-flex flex-row bd-highlight justify-content-between mt-0 pt-0 " id="pruebita1" style="height: 100px;">
 							<div class="d-flex bd-highlight" id="pruebita1" style="width: 40%;height: 100%;text-align:center;">
@@ -244,13 +245,14 @@ const TIP_PEND_RECEP = 1;
 							</div>
 							<div class="bd-highlight mt-0 pt-0" id="pruebita1" style="width: 60%;height: 100%;">
 								<div class="d-flex align-items-end flex-column bd-highlight mt-0 pt-0" id="pruebita1" style="height: 100%;">
-									<div class="display-4 bd-highlight pt-0 mt-0" id="pruebita1" style="line-height: 0.7;">0</div>
+									<div class="display-4 bd-highlight pt-0 mt-0" id="pruebita1" style="line-height: 0.7;"><?php echo getCountLocRemesasTodos(3,''); ?></div>
 									<div class="mt-auto bd-highlight" id="tit1" style="margin:0px;padding: 0px;">Remesas Fuera de Rango</div>
 								</div>
 							</div>
 						</div>
+						
 					</div>
-					<div class="card-footer bg-light mt-0 pt-0 mb-0 pb-0" id="etiqueta" onclick="aler();return false;">
+					<div class="card-footer bg-light mt-0 pt-0 mb-0 pb-0" id="etiqueta" onclick="location.href='remesas/remesasFueraRango.php';">
 						<div class="d-flex flex-row justify-content-between" id="pruebita1" style="height:40px;">
 							<div class="align-self-center" id="pruebita1" style="color: #E99926;width: 60%;">
 								Ver Detalle
