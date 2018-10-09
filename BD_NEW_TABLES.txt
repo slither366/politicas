@@ -1,0 +1,33 @@
+CREATE TABLE tb_deposito_pendiente (
+  id int(4) NOT NULL,
+  cod_local varchar(5) NOT NULL,
+  dia_mes varchar(50) NOT NULL,
+  fecha_mes datetime NOT NULL,
+  num_doc_jef_zona varchar(8) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ALTER TABLE tb_deposito_pendiente
+  ADD PRIMARY KEY (id);
+
+CREATE TABLE tb_deposito_tarde (
+  id int(9) NOT NULL,
+  cod_local varchar(5) NOT NULL,
+  mes_periodo varchar(2) DEFAULT NULL,
+  ano_periodo varchar(4) DEFAULT NULL,
+  dia_cierre varchar(30) NOT NULL,
+  fecha_cierre_dia datetime NOT NULL,
+  dia_op_banc varchar(30) DEFAULT NULL,
+  fecha_op_bancaria datetime NOT NULL,
+  dif_min double(9,2) DEFAULT NULL,
+  cant_dias varchar(50) DEFAULT NULL,
+  moneda varchar(20) DEFAULT NULL,
+  monto_deposito double(9,2) NOT NULL,
+  num_operacion varchar(20) NOT NULL,
+  usuario varchar(50) DEFAULT NULL,
+  mon_tot_perdido double(9,2) DEFAULT NULL,
+  estado_cuadratura varchar(10) DEFAULT NULL,
+  num_doc_jef_zona varchar(8) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ALTER TABLE tb_deposito_tarde
+  ADD PRIMARY KEY (id);
